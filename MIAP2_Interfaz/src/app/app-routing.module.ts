@@ -9,6 +9,13 @@ const routes: Routes = [
   {
     path: 'login',
     loadChildren: () => import('./modules/login/login-module').then(m => m.LoginModule)
+  },
+  {
+    path: 'reports',
+    loadChildren: () => import('./modules/report/report-routing.module').then(m => m.ReportRoutingModule)
+  },
+  {
+    path: '**', redirectTo: 'commandline'
   }
 ];
 

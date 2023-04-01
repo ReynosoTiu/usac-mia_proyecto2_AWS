@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { HtmlInputEvent } from 'src/app/models/global.model';
 
 @Component({
@@ -8,7 +8,9 @@ import { HtmlInputEvent } from 'src/app/models/global.model';
 })
 export class CommandlineComponent implements OnInit {
 
+  textoArchivoLeido = '';
   disableBtn = false;
+  
   constructor() { }
 
   ngOnInit(): void {
@@ -18,7 +20,6 @@ export class CommandlineComponent implements OnInit {
     this.disableBtn = !this.disableBtn;
   }
 
-  textoArchivoLeido = '';
   seleccionar(event: HtmlInputEvent){
     console.log(event);
     if (event.target.files && event.target.files[0]) {
