@@ -1,1 +1,13 @@
-<p>login works!</p>
+<div class="contenedor">
+    <div class="formulario">
+        <label class="label fw-bolder"> LOGIN </label>
+        <input [(ngModel)]="id_particion" class="form-control form-control-sm mt-4" type="text" placeholder="ID Partición">
+        <input [(ngModel)]="usuario" class="form-control form-control-sm mt-2" type="text" placeholder="Usuario">
+        <input [(ngModel)]="password" class="form-control form-control-sm mt-2" type="text" placeholder="Contraseña">
+
+        <div class="boton">
+            <button (click)="ingresar()" class="btn btn-sm btn-secondary"> Ingresar </button>
+        </div>
+    </div>
+
+</div>
