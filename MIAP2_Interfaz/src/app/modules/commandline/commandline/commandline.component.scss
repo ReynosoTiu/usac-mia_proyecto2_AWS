@@ -1,25 +1,18 @@
-.encabezado{
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.contenedorTextos{
+    height: calc(100% - 100px);
+}
+
+.textoEntrada {
+    height: 45%;
+    margin: 0.5rem;
+}
+
+.textoSalida {
+    height: 45%;
+    margin: 0.5rem;
+}
+
+.textArea {
     width: 100%;
-    background-color: darkgray;
-    padding: 10px;
-}
-
-.textoEncabezado{
-    width: 60%;
-}
-
-.grupoBotones{
-    width: 40%;
-    display: flex;
-    align-items: center;
-    justify-content: end;
-}
-.toogleButton{
-    border-style: solid;
-    border-width: 1px;
-    border-color: black;
-    width: 100px;
+    height: 100%;
 }

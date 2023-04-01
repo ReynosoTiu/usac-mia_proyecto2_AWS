@@ -4,7 +4,11 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    loadChildren: () => import('./modules/commandline/commandline-module').then(m => m.CommandlineModule),
+    loadChildren: () => import('./modules/commandline/commandline-module').then(m => m.CommandlineModule)
+  },
+  {
+    path: 'login',
+    loadChildren: () => import('./modules/login/login-module').then(m => m.LoginModule)
   }
 ];
 

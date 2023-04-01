@@ -2,13 +2,15 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { CommandlineRoutingModule } from './commandline-routing.module';
-//import { ConfirmButtonComponent } from 'src/app/shared/buttons/confirm-button/confirm-button.component';
+import { CommandlineComponent } from './commandline/commandline.component';
+
 
 
 @NgModule({
   declarations: [
-    //ConfirmButtonComponent
+    CommandlineComponent
   ],
+  
   imports: [
     CommonModule,
     CommandlineRoutingModule

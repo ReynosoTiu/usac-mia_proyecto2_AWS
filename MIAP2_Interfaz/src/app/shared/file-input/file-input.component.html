@@ -1,0 +1,2 @@
+<button (click)="inputFile.click()" class="btn btn-sm btn-secondary"> Examinar </button>
+<input style="display: none;" type="file" #inputFile (change)="seleccionar($event)" [accept]="accept">
