@@ -15,7 +15,7 @@ import (
 
 func main() {
 	InicializarVariablesGlobales()
-	iniciarServidor()
+	//iniciarServidor("127.0.0.1", "4000")
 	leerComando() //siempre descomentar esto porque siver
 
 }
@@ -41,15 +41,16 @@ func leerComando() {
 
 }
 
-func iniciarServidor() {
+func iniciarServidor(ip string, puerto string) {
 	c := cors.New(cors.Options{
 		AllowedOrigins: []string{"*"},
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
 		AllowedHeaders: []string{"*"},
 	})
 	router := NewRouter()
-	fmt.Println("El servidor esta corriendo en http://127.0.0.1:4000")
-	log.Fatal(http.ListenAndServe(":4001", c.Handler(router)))
+
+	fmt.Println("El servidor esta corriendo en http://" + ip + ":" + puerto)
+	log.Fatal(http.ListenAndServe(":"+puerto, c.Handler(router)))
 }
 
 //______________ FIN DE LEER COMANDO ____________

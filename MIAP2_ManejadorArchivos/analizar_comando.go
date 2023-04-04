@@ -268,7 +268,7 @@ func Reconocer_mkdisk(lista_param string, comando_aux string) int {
 		for i := 0; i < len(parametros); i++ {
 			if parametros[i].nombre != "" && parametros[i].valor != "" {
 
-				if "-size=" == strings.ToLower(parametros[i].nombre) {
+				if ">size=" == strings.ToLower(parametros[i].nombre) {
 					s, err := strconv.Atoi(parametros[i].valor)
 					if err == nil && s > 0 {
 						size = int32(s)
@@ -278,7 +278,7 @@ func Reconocer_mkdisk(lista_param string, comando_aux string) int {
 						return -1
 					}
 
-				} else if "-unit=" == strings.ToLower(parametros[i].nombre) {
+				} else if ">unit=" == strings.ToLower(parametros[i].nombre) {
 					if strings.ToLower(parametros[i].valor) == "" {
 						fmt.Println("ERROR UNIT SIN VALOR EN PARAMETRO")
 						return -1
@@ -296,7 +296,7 @@ func Reconocer_mkdisk(lista_param string, comando_aux string) int {
 						fmt.Println("ERROR UNIT PARAMETRO INCORRECTO: " + unit)
 						return -1
 					}
-				} else if "-path=" == strings.ToLower(parametros[i].nombre) {
+				} else if ">path=" == strings.ToLower(parametros[i].nombre) {
 					var path_temp string = strings.Replace(parametros[i].valor, filepath.Ext(parametros[i].valor), ".dk", 1)
 					path = strings.ReplaceAll(path_temp, "\"", "")
 
@@ -306,7 +306,7 @@ func Reconocer_mkdisk(lista_param string, comando_aux string) int {
 					}
 					hay_path = true
 
-				} else if "-fit=" == strings.ToLower(parametros[i].nombre) {
+				} else if ">fit=" == strings.ToLower(parametros[i].nombre) {
 
 					if strings.ToLower(parametros[i].valor) == "" {
 						fmt.Println("ERROR FIT SIN VALOR EN PARAMETRO")
@@ -365,7 +365,7 @@ func Reconocer_Rmdisk(lista_comando string, comando_aux string) int {
 		for i := 0; i < len(parametros); i++ {
 			if parametros[i].valor != "" && parametros[i].nombre != "" {
 
-				if "-path=" == strings.ToLower(parametros[i].nombre) {
+				if ">path=" == strings.ToLower(parametros[i].nombre) {
 					path = strings.ReplaceAll(parametros[i].valor, "\"", "")
 					hay_path = true
 				}
@@ -417,7 +417,7 @@ func Reconocer_Fdisk(lista_comando string, comando_aux string) int {
 		for i := 0; i < len(parametros); i++ {
 			if parametros[i].valor != "" && parametros[i].nombre != "" {
 
-				if "-size=" == strings.ToLower(parametros[i].nombre) {
+				if ">size=" == strings.ToLower(parametros[i].nombre) {
 					s, err := strconv.Atoi(parametros[i].valor)
 					if err == nil && s > 0 {
 						size = int32(s)
@@ -427,7 +427,7 @@ func Reconocer_Fdisk(lista_comando string, comando_aux string) int {
 						return -1
 					}
 
-				} else if "-unit=" == strings.ToLower(parametros[i].nombre) {
+				} else if ">unit=" == strings.ToLower(parametros[i].nombre) {
 					if strings.ToLower(parametros[i].valor) == "" {
 						fmt.Println("ERROR UNIT SIN VALOR EN PARAMETRO")
 						return -1
@@ -445,7 +445,7 @@ func Reconocer_Fdisk(lista_comando string, comando_aux string) int {
 						fmt.Println("ERROR UNIT PARAMETRO INCORRECTO: " + unit)
 						return -1
 					}
-				} else if "-path=" == strings.ToLower(parametros[i].nombre) {
+				} else if ">path=" == strings.ToLower(parametros[i].nombre) {
 					var path_temp string = strings.Replace(parametros[i].valor, filepath.Ext(parametros[i].valor), ".dk", 1)
 					path = strings.ReplaceAll(path_temp, "\"", "")
 
@@ -455,7 +455,7 @@ func Reconocer_Fdisk(lista_comando string, comando_aux string) int {
 					}
 					hay_path = true
 
-				} else if "-fit=" == strings.ToLower(parametros[i].nombre) {
+				} else if ">fit=" == strings.ToLower(parametros[i].nombre) {
 
 					if strings.ToLower(parametros[i].valor) == "" {
 						fmt.Println("ERROR FIT SIN VALOR EN PARAMETRO")
@@ -474,7 +474,7 @@ func Reconocer_Fdisk(lista_comando string, comando_aux string) int {
 						fmt.Println("ERROR FIT PARAMETRO INCORRECTO: " + strings.ToLower(parametros[i].valor))
 						return -1
 					}
-				} else if "-type=" == strings.ToLower(parametros[i].nombre) {
+				} else if ">type=" == strings.ToLower(parametros[i].nombre) {
 					//type
 					if strings.ToLower(parametros[i].valor) == "" {
 						fmt.Println("ERROR TYPE SIN VALOR EN PARAMETRO")
@@ -493,7 +493,7 @@ func Reconocer_Fdisk(lista_comando string, comando_aux string) int {
 						return -1
 					}
 
-				} else if "-name=" == strings.ToLower(parametros[i].nombre) {
+				} else if ">name=" == strings.ToLower(parametros[i].nombre) {
 					//name
 					if parametros[i].valor == "" {
 						fmt.Println("ERROR NAME SIN VALOR EN PARAMETRO")
@@ -551,7 +551,7 @@ func Reconocer_Mount(lista_comando string, comando_aux string) int {
 		for i := 0; i < len(parametros); i++ {
 
 			if parametros[i].valor != "" && parametros[i].nombre != "" {
-				if "-path=" == strings.ToLower(parametros[i].nombre) {
+				if ">path=" == strings.ToLower(parametros[i].nombre) {
 					var path_temp string = strings.Replace(parametros[i].valor, filepath.Ext(parametros[i].valor), ".dk", 1)
 					path = strings.ReplaceAll(path_temp, "\"", "")
 
@@ -561,7 +561,7 @@ func Reconocer_Mount(lista_comando string, comando_aux string) int {
 					}
 					hay_path = true
 
-				} else if "-name=" == strings.ToLower(parametros[i].nombre) {
+				} else if ">name=" == strings.ToLower(parametros[i].nombre) {
 					//name
 					if parametros[i].valor == "" {
 						fmt.Println("ERROR NAME SIN VALOR EN PARAMETRO")
@@ -622,7 +622,7 @@ func Reconocer_Mkfs(lista_comando string, comando_aux string) int {
 		for i := 0; i < len(parametros); i++ {
 
 			if parametros[i].valor != "" && parametros[i].nombre != "" {
-				if "-id=" == strings.ToLower(parametros[i].nombre) {
+				if ">id=" == strings.ToLower(parametros[i].nombre) {
 					//var path_temp string = strings.Replace(parametros[i].valor, filepath.Ext(parametros[i].valor), ".dk", 1)
 					id = strings.ReplaceAll(parametros[i].valor, "\"", "")
 
@@ -632,7 +632,7 @@ func Reconocer_Mkfs(lista_comando string, comando_aux string) int {
 					}
 					hay_id = true
 
-				} else if "-type=" == strings.ToLower(parametros[i].nombre) {
+				} else if ">type=" == strings.ToLower(parametros[i].nombre) {
 					//name
 					if parametros[i].valor == "" {
 						fmt.Println("ERROR TYPE SIN VALOR EN PARAMETRO")
@@ -685,7 +685,7 @@ func Reconocer_Login(lista_comando string, comando_aux string) int {
 		for i := 0; i < len(parametros); i++ {
 
 			if parametros[i].valor != "" && parametros[i].nombre != "" {
-				if "-id=" == strings.ToLower(parametros[i].nombre) {
+				if ">id=" == strings.ToLower(parametros[i].nombre) {
 					//var path_temp string = strings.Replace(parametros[i].valor, filepath.Ext(parametros[i].valor), ".dk", 1)
 					id = strings.ReplaceAll(parametros[i].valor, "\"", "")
 
@@ -695,7 +695,7 @@ func Reconocer_Login(lista_comando string, comando_aux string) int {
 					}
 					hay_id = true
 
-				} else if "-password=" == strings.ToLower(parametros[i].nombre) {
+				} else if ">pwd=" == strings.ToLower(parametros[i].nombre) {
 					//name
 					if parametros[i].valor == "" {
 						fmt.Println("ERROR PASSWORD SIN VALOR EN PARAMETRO")
@@ -705,7 +705,7 @@ func Reconocer_Login(lista_comando string, comando_aux string) int {
 					password = parametros[i].valor
 					hay_password = true
 
-				} else if "-usuario=" == strings.ToLower(parametros[i].nombre) {
+				} else if ">user=" == strings.ToLower(parametros[i].nombre) {
 					//name
 					if parametros[i].valor == "" {
 						fmt.Println("ERROR USUARIO SIN VALOR EN PARAMETRO")
@@ -775,7 +775,7 @@ func Reconocer_Mkgrp(lista_comando string, comando_aux string) int {
 
 			if parametros[i].valor != "" && parametros[i].nombre != "" {
 
-				if "-name=" == strings.ToLower(parametros[i].nombre) {
+				if ">name=" == strings.ToLower(parametros[i].nombre) {
 					//var path_temp string = strings.Replace(parametros[i].valor, filepath.Ext(parametros[i].valor), ".dk", 1)
 					name = strings.ReplaceAll(parametros[i].valor, "\"", "")
 
@@ -826,7 +826,7 @@ func Reconocer_Rmgrp(lista_comando string, comando_aux string) int {
 
 			if parametros[i].valor != "" && parametros[i].nombre != "" {
 
-				if "-name=" == strings.ToLower(parametros[i].nombre) {
+				if ">name=" == strings.ToLower(parametros[i].nombre) {
 					//var path_temp string = strings.Replace(parametros[i].valor, filepath.Ext(parametros[i].valor), ".dk", 1)
 					name = strings.ReplaceAll(parametros[i].valor, "\"", "")
 
@@ -881,7 +881,7 @@ func Reconocer_Mkusr(lista_comando string, comando_aux string) int {
 
 			if parametros[i].valor != "" && parametros[i].nombre != "" {
 
-				if "-usuario=" == strings.ToLower(parametros[i].nombre) {
+				if ">user=" == strings.ToLower(parametros[i].nombre) {
 					//var path_temp string = strings.Replace(parametros[i].valor, filepath.Ext(parametros[i].valor), ".dk", 1)
 					usuario = strings.ReplaceAll(parametros[i].valor, "\"", "")
 
@@ -891,7 +891,7 @@ func Reconocer_Mkusr(lista_comando string, comando_aux string) int {
 					}
 					hay_usuario = true
 
-				} else if "-pwd=" == strings.ToLower(parametros[i].nombre) {
+				} else if ">pwd=" == strings.ToLower(parametros[i].nombre) {
 					//var path_temp string = strings.Replace(parametros[i].valor, filepath.Ext(parametros[i].valor), ".dk", 1)
 					pass_word = strings.ReplaceAll(parametros[i].valor, "\"", "")
 
@@ -901,7 +901,7 @@ func Reconocer_Mkusr(lista_comando string, comando_aux string) int {
 					}
 					hay_pass = true
 
-				} else if "-grp=" == strings.ToLower(parametros[i].nombre) {
+				} else if ">grp=" == strings.ToLower(parametros[i].nombre) {
 					//var path_temp string = strings.Replace(parametros[i].valor, filepath.Ext(parametros[i].valor), ".dk", 1)
 					grupo_incluir = strings.ReplaceAll(parametros[i].valor, "\"", "")
 
@@ -959,7 +959,7 @@ func Reconocer_Rmusr(lista_comando string, comando_aux string) int {
 
 			if parametros[i].valor != "" && parametros[i].nombre != "" {
 
-				if "-usuario=" == strings.ToLower(parametros[i].nombre) {
+				if ">user=" == strings.ToLower(parametros[i].nombre) {
 					name = strings.ReplaceAll(parametros[i].valor, "\"", "")
 
 					if name == "" {
@@ -1010,7 +1010,7 @@ func Reconocer_Mkdir(lista_comando string, comando_aux string) int {
 
 			if parametros[i].valor != "" && parametros[i].nombre != "" || parametros[i].valor == "" && parametros[i].nombre != "" {
 
-				if "-path=" == strings.ToLower(parametros[i].nombre) {
+				if ">path=" == strings.ToLower(parametros[i].nombre) {
 					//var path_temp string = strings.Replace(parametros[i].valor, filepath.Ext(parametros[i].valor), ".dk", 1)
 					path_crear = strings.ReplaceAll(parametros[i].valor, "\"", "")
 
@@ -1020,9 +1020,9 @@ func Reconocer_Mkdir(lista_comando string, comando_aux string) int {
 					}
 					hay_path_crear = true
 
-				} else if "-p" == strings.ToLower(parametros[i].nombre) {
+				} else if ">r" == strings.ToLower(parametros[i].nombre) {
 					if hay_p {
-						fmt.Println("ERROR P SE REPITE EN PARAMETRO EN MKDIR")
+						fmt.Println("ERROR R SE REPITE EN PARAMETRO EN MKDIR")
 						return -1
 					}
 					hay_p = true
@@ -1071,7 +1071,7 @@ func Reconocer_Mkfile(lista_comando string, comando_aux string) int {
 
 			if parametros[i].valor != "" && parametros[i].nombre != "" || parametros[i].valor == "" && parametros[i].nombre != "" {
 
-				if "-path=" == strings.ToLower(parametros[i].nombre) {
+				if ">path=" == strings.ToLower(parametros[i].nombre) {
 					//var path_temp string = strings.Replace(parametros[i].valor, filepath.Ext(parametros[i].valor), ".dk", 1)
 					path_crear_archivo = strings.ReplaceAll(parametros[i].valor, "\"", "")
 
@@ -1081,14 +1081,14 @@ func Reconocer_Mkfile(lista_comando string, comando_aux string) int {
 					}
 					hay_path_crear = true
 
-				} else if "-r" == strings.ToLower(parametros[i].nombre) {
+				} else if ">r" == strings.ToLower(parametros[i].nombre) {
 					if hay_r {
 						fmt.Println("ERROR R SE REPITE EN PARAMETRO EN MKFILE")
 						return -1
 					}
 					hay_r = true
 
-				} else if "-size=" == strings.ToLower(parametros[i].nombre) {
+				} else if ">size=" == strings.ToLower(parametros[i].nombre) {
 					s, err := strconv.Atoi(parametros[i].valor)
 					if err == nil && s > 0 {
 						size_archivo = int(s)
@@ -1098,7 +1098,7 @@ func Reconocer_Mkfile(lista_comando string, comando_aux string) int {
 						return -1
 					}
 
-				} else if "-cont=" == strings.ToLower(parametros[i].nombre) {
+				} else if ">cont=" == strings.ToLower(parametros[i].nombre) {
 					cont_archivo = strings.ReplaceAll(parametros[i].valor, "\"", "")
 
 					if cont_archivo == "" {
@@ -1152,7 +1152,7 @@ func Reconocer_Rep(lista_param string, comando_aux string) int {
 		for i := 0; i < len(parametros); i++ {
 			if parametros[i].nombre != "" && parametros[i].valor != "" {
 
-				if "-name=" == strings.ToLower(parametros[i].nombre) {
+				if ">name=" == strings.ToLower(parametros[i].nombre) {
 					name = strings.ReplaceAll(parametros[i].valor, "\"", "")
 
 					if name == "" {
@@ -1161,7 +1161,7 @@ func Reconocer_Rep(lista_param string, comando_aux string) int {
 					}
 					hay_name = true
 
-				} else if "-path=" == strings.ToLower(parametros[i].nombre) {
+				} else if ">path=" == strings.ToLower(parametros[i].nombre) {
 					path_reporte = strings.ReplaceAll(parametros[i].valor, "\"", "")
 					var tem_ext = strings.ReplaceAll(filepath.Ext(parametros[i].valor), ".", "")
 					extension_rep = strings.ReplaceAll(tem_ext, "\"", "")
@@ -1174,7 +1174,7 @@ func Reconocer_Rep(lista_param string, comando_aux string) int {
 						return -1
 					}
 					hay_path = true
-				} else if "-id=" == strings.ToLower(parametros[i].nombre) {
+				} else if ">id=" == strings.ToLower(parametros[i].nombre) {
 					//var path_temp string = strings.Replace(parametros[i].valor, filepath.Ext(parametros[i].valor), ".dk", 1)
 					id = strings.ReplaceAll(parametros[i].valor, "\"", "")
 
@@ -1184,7 +1184,7 @@ func Reconocer_Rep(lista_param string, comando_aux string) int {
 					}
 					hay_id = true
 
-				} else if "-ruta=" == strings.ToLower(parametros[i].nombre) {
+				} else if ">ruta=" == strings.ToLower(parametros[i].nombre) {
 					ruta = strings.ReplaceAll(parametros[i].valor, "\"", "")
 
 					if ruta == "" {
