@@ -15,8 +15,8 @@ import (
 
 func main() {
 	InicializarVariablesGlobales()
-	//iniciarServidor("127.0.0.1", "4000")
-	leerComando() //siempre descomentar esto porque siver
+	iniciarServidor("127.0.0.1", "4000")
+	//leerComando() //siempre descomentar esto porque siver
 
 }
 
