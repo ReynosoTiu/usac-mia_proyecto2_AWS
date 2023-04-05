@@ -32,11 +32,8 @@ func leerComando() {
 		if strings.ToLower(text) == "exit" {
 			break
 		}
-		if Reconocer_Comando(text) == 0 {
-			fmt.Println("RECONOCIO COMANDO CORRECTATEMTE")
-		} else {
-			fmt.Println("ERROR RETURN -1 EN ANALIZAR PARAMETROS")
-		}
+
+		fmt.Println(Reconocer_Comando(text))
 	}
 
 }

@@ -5,9 +5,9 @@
 
 <div class="contenedorTextos">
     <div class="textoEntrada">
-        <textarea class="textArea"> {{ textoArchivoLeido }} </textarea>
+        <textarea class="textArea" (change)="modificaTexto($event)" > {{ textoArchivoLeido }} </textarea>
     </div>
     <div class="textoSalida">
-        <textarea class="textArea"> {{ textoArchivoLeido }} </textarea>
+        <textarea class="textArea"> {{ textoArchivoResult }} </textarea>
     </div>
 </div>

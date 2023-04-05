@@ -17,10 +17,7 @@ export class CommandlineService {
   }
 
   enviarContenidoEEA(contenido: string) {
-    this.http.post('Carga', contenido).then(res => {
-      console.log(res);
-    }).catch(err => {
-      console.log(err);
-    });
+    return this.http.post('Carga', contenido);
+    
   }
 }

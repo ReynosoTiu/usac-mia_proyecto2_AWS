@@ -49,30 +49,23 @@ func Carga(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Error datos no validos")
 	}
 	content := string(reqBody)
-	ejecutar_contenido_json(content)
+	resultado := ejecutar_contenido_json(content)
 	w.Header().Set("Content-type", "application/json")
-	json.NewEncoder(w).Encode("mkdir exitosamente")
+	json.NewEncoder(w).Encode(resultado)
 	//Borrar esto xD fmt.Println(content)
 
 }
 
-func ejecutar_contenido_json(contenido string) {
+func ejecutar_contenido_json(contenido string) string {
 	var temp string = strings.ReplaceAll(contenido, "\r", "")
 
 	res1 := strings.Split(temp, "\n")
 
-	for i := 4; i < len(res1)-2; i++ {
+	var result = ""
+	for i := 0; i < len(res1); i++ {
 		if res1[i] != "" {
-			//var temp = res1[i]
-			//fmt.Println("MI COntenido[", i, "]:", res1[i])
-			//fmt.Println("MI COntenido[", i, "]:", []byte(temp))
-			if Reconocer_Comando(res1[i]) == 0 {
-				fmt.Println("RECONOCIO COMANDO CORRECTATEMTE")
-			} else {
-				fmt.Println("ERROR RETURN -1 EN ANALIZAR PARAMETROS")
-			}
-
+			result += Reconocer_Comando(res1[i]) + "\n"
 		}
 	}
-
+	return result
 }

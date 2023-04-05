@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 	_ "fmt"
 	"log"
 	"math/rand"
@@ -17,11 +18,10 @@ func Hora_fecha() string {
 	return tiemp_hora.Format("01-02-2006 15:04:05")
 }
 
-func Crear_archivo(size int32, path string, fit string, unit string) int {
+func Crear_archivo(size int32, path string, fit string, unit string) string {
 	var size_archivo int32 = 0
 	var fit_archivo string = ""
-
-	if Obtener_extension_archivo(path) == ".dk" {
+	if Obtener_extension_archivo(path) == ".dsk" {
 		//_ = size_archivo
 		//_ = fit_archivo
 
@@ -58,7 +58,7 @@ func Crear_archivo(size int32, path string, fit string, unit string) int {
 
 		if err != nil {
 			log.Fatal(err)
-			return -1
+			return "Error del SO al crear el disco"
 		}
 		var j int32
 		for j = 0; j < (size_archivo / 1024); j++ {
@@ -89,10 +89,11 @@ func Crear_archivo(size int32, path string, fit string, unit string) int {
 		mi_archivo.Close()
 
 	} else {
-		return -1
+		fmt.Println("extension")
+		return "Extension no admitida en el parametro PATH"
 	}
 
-	return 0
+	return "ARCHIVO CREADO EXITOSAMENTE"
 }
 
 func EscribirBytes(file *os.File, bytes []byte) {
@@ -124,6 +125,7 @@ func Crear_carpetas(direccion string) {
 }
 
 func Obtener_extension_archivo(path string) string {
+	fmt.Println("Extension encontrada " + strings.ToLower(filepath.Ext(path)))
 	return strings.ToLower(filepath.Ext(path))
 }
 

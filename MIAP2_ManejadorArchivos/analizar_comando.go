@@ -164,7 +164,7 @@ func Reconocer_parametros(texto_parametros string, nombre_comando string) []Para
 
 } // fin de reconocer parametros
 
-func Reconocer_Comando(texto_comando string) int {
+func Reconocer_Comando(texto_comando string) string {
 	fmt.Println(texto_comando)
 	if texto_comando[0] != 35 {
 		var ins_aux string = ""
@@ -177,8 +177,7 @@ func Reconocer_Comando(texto_comando string) int {
 
 		switch strings.ToLower(ins_aux) {
 		case "mkdisk":
-			Reconocer_mkdisk(texto_comando, ins_aux)
-			break
+			return Reconocer_mkdisk(texto_comando, ins_aux)
 		case "fdisk":
 			Reconocer_Fdisk(texto_comando, ins_aux)
 			break
@@ -242,19 +241,17 @@ func Reconocer_Comando(texto_comando string) int {
 
 			break
 		default:
-			return -1
-
+			return "COMANDO NO RECONOCIDO"
 		}
 
 	} else {
-		//AQUI ES UN COMENTARIO
-		//fmt.Println(texto_comando)
+		return texto_comando
 	}
 
-	return 0
+	return "RECONOCER COMANDO"
 }
 
-func Reconocer_mkdisk(lista_param string, comando_aux string) int {
+func Reconocer_mkdisk(lista_param string, comando_aux string) string {
 	var size int32 = 0
 	var unit string = ""
 	var path string = ""
@@ -275,34 +272,30 @@ func Reconocer_mkdisk(lista_param string, comando_aux string) int {
 						hay_size = true
 
 					} else {
-						return -1
+						return "El parametro SIZE debe ser mayor a cero"
 					}
 
 				} else if ">unit=" == strings.ToLower(parametros[i].nombre) {
 					if strings.ToLower(parametros[i].valor) == "" {
 						fmt.Println("ERROR UNIT SIN VALOR EN PARAMETRO")
-						return -1
+						return "Valor del parametro UNIT requerido"
 					} else if strings.ToLower(parametros[i].valor) == "k" {
 						unit = strings.ToLower(parametros[i].valor)
-
 					} else if strings.ToLower(parametros[i].valor) == "m" {
 						unit = strings.ToLower(parametros[i].valor)
-
 					} else if strings.ToLower(parametros[i].valor) == "b" {
 						unit = strings.ToLower(parametros[i].valor)
-
 					} else {
 						unit = strings.ToLower(parametros[i].valor)
 						fmt.Println("ERROR UNIT PARAMETRO INCORRECTO: " + unit)
-						return -1
+						return "Valor del parametro UNIT incorrecto"
 					}
 				} else if ">path=" == strings.ToLower(parametros[i].nombre) {
-					var path_temp string = strings.Replace(parametros[i].valor, filepath.Ext(parametros[i].valor), ".dk", 1)
+					var path_temp string = strings.Replace(parametros[i].valor, filepath.Ext(parametros[i].valor), ".dsk", 1)
 					path = strings.ReplaceAll(path_temp, "\"", "")
-
 					if path == "" {
 						fmt.Println("ERROR PATH SIN VALOR EN PARAMETRO")
-						return -1
+						return "Valor del parametro PATH requerido"
 					}
 					hay_path = true
 
@@ -310,24 +303,21 @@ func Reconocer_mkdisk(lista_param string, comando_aux string) int {
 
 					if strings.ToLower(parametros[i].valor) == "" {
 						fmt.Println("ERROR FIT SIN VALOR EN PARAMETRO")
-						return -1
+						return "Valor del parametro FIT requerido"
 					} else if strings.ToLower(parametros[i].valor) == "wf" {
 						fit = strings.ToLower(parametros[i].valor)
-
 					} else if strings.ToLower(parametros[i].valor) == "ff" {
 						fit = strings.ToLower(parametros[i].valor)
-
 					} else if strings.ToLower(parametros[i].valor) == "bf" {
 						fit = strings.ToLower(parametros[i].valor)
-
 					} else {
 						fit = strings.ToLower(parametros[i].valor)
 						fmt.Println("ERROR FIT PARAMETRO INCORRECTO: " + fit)
-						return -1
+						return "Valor del parametro FIT incorrecto"
 					}
 				} else {
 					fmt.Println("ERROR NINGUN PARAMETRO COICIDE: " + parametros[i].nombre)
-					return -1
+					return "No se reconoce el parametro"
 				}
 
 			}
@@ -338,21 +328,17 @@ func Reconocer_mkdisk(lista_param string, comando_aux string) int {
 		if hay_size {
 			if hay_path {
 				Crear_carpetas(path)
-				if Crear_archivo(size, path, fit, unit) == 0 {
-					fmt.Println("ARCHIVO CREADO CORRECTAMENTE EN MKDISK")
-				} else {
-					fmt.Println("ERROR NO SE PUDO CREAR ARCHIVO EN MKDISK")
-				}
+				return Crear_archivo(size, path, fit, unit)
 			} else {
 				fmt.Println("ERROR NO HAY PATH EN MKDISK")
+				return "Parametro PATH requerido"
 			}
 		} else {
 			fmt.Println("ERROR NO HAY SIZE MKDISK")
+			return "Parametro SIZE requerido"
 		}
-
-		return 0
 	}
-	return -1
+	return "Ocurrio un error al tratar de crear el disco"
 } /*______________________ FIN DE ANALIZAR COMANDO MKDISK_____________________*/
 
 func Reconocer_Rmdisk(lista_comando string, comando_aux string) int {

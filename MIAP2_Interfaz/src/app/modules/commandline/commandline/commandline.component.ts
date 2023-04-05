@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { HtmlInputEvent } from 'src/app/models/global.model';
 import { CommandlineService } from '../commandline.service';
+import { GtoastrService } from 'src/app/services/gtoastr.service';
 
 @Component({
   selector: 'app-commandline',
@@ -9,10 +10,14 @@ import { CommandlineService } from '../commandline.service';
 })
 export class CommandlineComponent implements OnInit {
 
-  textoArchivoLeido = '';
+  textoArchivoLeido = "";
+  textoArchivoResult = "";
   disableBtn = false;
 
-  constructor(private commandlineService: CommandlineService) { }
+  constructor(
+    private commandlineService: CommandlineService,
+    private toastService: GtoastrService
+    ) { }
 
   ngOnInit(): void {
   }
@@ -22,10 +27,8 @@ export class CommandlineComponent implements OnInit {
   }
 
   seleccionar(event: HtmlInputEvent) {
-    console.log(event);
     if (event.target.files && event.target.files[0]) {
       let file: File = <File>event.target.files[0];
-      console.log(file.name);
       if (file.name.split('.').pop() === 'eea') {
         const reader = new FileReader();
         reader.onload = () => {
@@ -37,15 +40,19 @@ export class CommandlineComponent implements OnInit {
   }
 
   ejecutar() {
-    this.commandlineService.enviarContenidoEEA(this.textoArchivoLeido);
-    // for (let linea of contenido.split('\n')) {
-    //   if (linea) {
-    //     console.log(linea);
-    //   }
-    // }
+    this.commandlineService.enviarContenidoEEA(this.textoArchivoLeido)
+    .then(res=>{
+      this.textoArchivoResult += res;
+    }).catch(err=>{
+      this.toastService.error("Ha ocurrido un error");
+    });
   }
 
   get() {
     this.commandlineService.consumirInicial();
+  }
+
+  modificaTexto(event:any){
+    this.textoArchivoLeido = event.target.value;
   }
 }
