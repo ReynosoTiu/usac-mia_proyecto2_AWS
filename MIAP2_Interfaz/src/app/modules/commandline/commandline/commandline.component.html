@@ -1,6 +1,6 @@
 <div class="botonesEjecutables">
     <app-file-input [accept]="'.eea,application/octet-stream'" (changee)="seleccionar($event)"></app-file-input>
-    <button class="btn btn-sm btn-light m-2"> Ejecutar </button>
+    <button (click)="ejecutar()" class="btn btn-sm btn-light m-2"> Ejecutar </button>
 </div>
 
 <div class="contenedorTextos">

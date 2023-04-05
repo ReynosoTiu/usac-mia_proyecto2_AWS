@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { HttpClientModule } from '@angular/common/http';
 import { HotToastModule } from '@ngneat/hot-toast';
 
 @NgModule({
@@ -12,6 +13,7 @@ import { HotToastModule } from '@ngneat/hot-toast';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    HttpClientModule,
     HotToastModule.forRoot()
   ],
   providers: [],
