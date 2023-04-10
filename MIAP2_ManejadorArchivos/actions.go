@@ -58,14 +58,13 @@ func Carga(w http.ResponseWriter, r *http.Request) {
 
 func ejecutar_contenido_json(contenido string) string {
 	var temp string = strings.ReplaceAll(contenido, "\r", "")
-
-	res1 := strings.Split(temp, "\n")
-
-	var result = ""
-	for i := 0; i < len(res1); i++ {
-		if res1[i] != "" {
-			result += Reconocer_Comando(res1[i]) + "\n"
-		}
-	}
-	return result
+	return Reconocer_Comando(temp + "\n")
+	// res1 := strings.Split(temp, "\n")
+	// var result = ""
+	// for i := 0; i < len(res1); i++ {
+	// 	if res1[i] != "" {
+	// 		result += Reconocer_Comando(res1[i]) + "\n"
+	// 	}
+	// }
+	// return result
 }

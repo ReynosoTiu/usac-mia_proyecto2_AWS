@@ -13,49 +13,53 @@ func Print_fdisk() {
 	fmt.Println("Estoy en Fdisk")
 }
 
-func Crear_particion(size int32, unit string, path string, type_ string, fit string, name string) int {
+func Crear_particion(size int32, unit string, path string, type_ string, fit string, name string) string {
 
 	if type_ == "p" {
 		if buscar_indice_libre(path, "p") != -1 {
 			if Buscar_Nombre_P_E_L(path, name) == -1 {
-				particion_primaria(size, unit, path, type_, fit, name)
+				return particion_primaria(size, unit, path, type_, fit, name)
 			} else {
 				fmt.Println("ERROR AL CREAR PARTICION CON NOMBRE REPETIDO")
+				return "Ya existe una particion con el nombre ingresado | no se encuentra el disco"
 			}
 		} else {
 			fmt.Println("ERROR,YA EXISTEN 4 PARTICIONES")
+			return "Ya se cuenta con el numero maximo de particiones primarias"
 		}
 
 	} else if type_ == "e" {
 		if buscar_indice_libre(path, "e") == -1 {
 			if Buscar_Nombre_P_E_L(path, name) == -1 {
-				particion_extendida(size, unit, path, type_, fit, name)
+				return particion_extendida(size, unit, path, type_, fit, name)
 			} else {
 				fmt.Println("ERROR AL CREAR PARTICION CON NOMBRE REPETIDO")
+				return "Ya existe una particion con el nombre ingresado | no se encuentra el disco"
 			}
 		} else {
 			fmt.Println("ERROR,YA EXISTE UNA PARTICION EXTENDIDA")
+			return "Ya se cuenta con una particion extendida"
 		}
 
 	} else if type_ == "l" {
 		if Buscar_Nombre_P_E_L(path, name) == -1 {
-			particion_logica(size, unit, path, type_, fit, name)
+			return particion_logica(size, unit, path, type_, fit, name)
 		} else {
 			fmt.Println("ERROR AL CREAR PARTICION CON NOMBRE REPETIDO")
+			return "Ya existe una particion con el nombre ingresado | no se encuentra el disco"
 		}
 
 	} else {
 		if Buscar_Nombre_P_E_L(path, name) == -1 {
-			particion_primaria(size, unit, path, type_, fit, name)
+			return particion_primaria(size, unit, path, type_, fit, name)
 		} else {
 			fmt.Println("ERROR AL CREAR PARTICION CON NOMBRE REPETIDO")
+			return "Ya existe una particion con el nombre ingresado | no se encuentra el disco"
 		}
 	}
-
-	return 0
 }
 
-func particion_primaria(size int32, unit string, path string, type_ string, fit string, name string) {
+func particion_primaria(size int32, unit string, path string, type_ string, fit string, name string) string {
 	masterBoot := leer_archivo(path)
 	var indice int32 = Posicion_arreglo_disponible(&masterBoot, size)
 
@@ -97,6 +101,7 @@ func particion_primaria(size int32, unit string, path string, type_ string, fit 
 				}
 				Modificar_archivo(&masterBoot, path)
 				fmt.Println("PARTICION PRIMARIA CREADA CORRECTAMENTE")
+				return "PARTICION CREDA CORRECTAMENTE"
 			} else if fit == "bf" {
 				//mejor ajuste(BF)
 				var mejorIndice int32 = indice
@@ -133,6 +138,7 @@ func particion_primaria(size int32, unit string, path string, type_ string, fit 
 						}
 						Modificar_archivo(&masterBoot, path)
 						fmt.Println("PARTICION PRIMARIA CREADA CORRECTAMENTE")
+						return "PARTICION CREDA CORRECTAMENTE"
 					} else if fit == "bf" {
 						//mejor ajuste(BF)
 						var mejorIndice int32 = indice
@@ -166,7 +172,7 @@ func particion_primaria(size int32, unit string, path string, type_ string, fit 
 						}
 						Modificar_archivo(&masterBoot, path)
 						fmt.Println("PARTICION PRIMARIA CREADA CORRECTAMENTE")
-
+						return "PARTICION CREDA CORRECTAMENTE"
 					} else if fit == "wf" {
 						//peor ajuste(WF)
 						var peorIndice int32 = indice
@@ -200,7 +206,7 @@ func particion_primaria(size int32, unit string, path string, type_ string, fit 
 						}
 						Modificar_archivo(&masterBoot, path)
 						fmt.Println("PARTICION PRIMARIA CREADA CORRECTAMENTE")
-
+						return "PARTICION CREDA CORRECTAMENTE"
 					} else if fit == "" {
 						//peor ajuste(WF)
 						var peorIndice int32 = indice
@@ -234,7 +240,7 @@ func particion_primaria(size int32, unit string, path string, type_ string, fit 
 						}
 						Modificar_archivo(&masterBoot, path)
 						fmt.Println("PARTICION PRIMARIA CREADA CORRECTAMENTE")
-
+						return "PARTICION CREDA CORRECTAMENTE"
 					}
 					masterBoot.Mbr_partition[mejorIndice].Part_status = 49
 					masterBoot.Mbr_partition[mejorIndice].Part_type = ([]byte(type_))[0]
@@ -254,7 +260,7 @@ func particion_primaria(size int32, unit string, path string, type_ string, fit 
 				}
 				Modificar_archivo(&masterBoot, path)
 				fmt.Println("PARTICION PRIMARIA CREADA CORRECTAMENTE")
-
+				return "PARTICION CREDA CORRECTAMENTE"
 			} else if fit == "wf" {
 				//peor ajuste(WF)
 				var peorIndice int32 = indice
@@ -288,7 +294,7 @@ func particion_primaria(size int32, unit string, path string, type_ string, fit 
 				}
 				Modificar_archivo(&masterBoot, path)
 				fmt.Println("PARTICION PRIMARIA CREADA CORRECTAMENTE")
-
+				return "PARTICION CREDA CORRECTAMENTE"
 			} else if fit == "" {
 				//peor ajuste(WF)
 				var peorIndice int32 = indice
@@ -322,19 +328,23 @@ func particion_primaria(size int32, unit string, path string, type_ string, fit 
 				}
 				Modificar_archivo(&masterBoot, path)
 				fmt.Println("PARTICION PRIMARIA CREADA CORRECTAMENTE")
-
+				return "PARTICION CREDA CORRECTAMENTE"
 			}
 
 		} else {
 			fmt.Println("ERROR AL CREAR PARTICION PRIMARIA ESPACIO INSUFICIENTE.   ESPACIO DISPONIBLE:", EspacioDisponible(path), "ESPACIO FALTANTE: ", (size - EspacioDisponible(path)))
+			return "Espacio insuficiente para crear la particion"
 		}
 
 	} else {
 		fmt.Println("ERROR,AL CREAR PARTICION YA EXISTE 4 PARTICIONES")
+		return "Ya se cuenta con el numero maximo de particiones primarias"
 	}
+
+	return "PARTICION CREDA CORRECTAMENTE"
 }
 
-func particion_extendida(size int32, unit string, path string, type_ string, fit string, name string) {
+func particion_extendida(size int32, unit string, path string, type_ string, fit string, name string) string {
 	masterBoot := leer_archivo(path)
 	var indice int32 = Posicion_arreglo_disponible(&masterBoot, size)
 
@@ -381,7 +391,7 @@ func particion_extendida(size int32, unit string, path string, type_ string, fit
 				copy(extendBoot.Part_name[:], "")
 				Modificar_archivo_ebr(&extendBoot, path, extendBoot.Part_start)
 				fmt.Println("PARTICION EXTENDIDA CREADA CORRECTAMENTE")
-
+				return "PARTICION CREDA CORRECTAMENTE"
 			} else if fit == "bf" {
 				//mejor ajuste(BF)
 				var mejorIndice int32 = indice
@@ -424,7 +434,7 @@ func particion_extendida(size int32, unit string, path string, type_ string, fit
 				copy(extendBoot.Part_name[:], "")
 				Modificar_archivo_ebr(&extendBoot, path, extendBoot.Part_start)
 				fmt.Println("PARTICION EXTENDIDA CREADA CORRECTAMENTE")
-
+				return "PARTICION CREDA CORRECTAMENTE"
 			} else if fit == "wf" {
 				//peor ajuste(WF)
 				var peorIndice int32 = indice
@@ -467,7 +477,7 @@ func particion_extendida(size int32, unit string, path string, type_ string, fit
 				copy(extendBoot.Part_name[:], "")
 				Modificar_archivo_ebr(&extendBoot, path, extendBoot.Part_start)
 				fmt.Println("PARTICION EXTENDIDA CREADA CORRECTAMENTE")
-
+				return "PARTICION CREDA CORRECTAMENTE"
 			} else if fit == "" {
 				//peor ajuste(WF)
 				var peorIndice int32 = indice
@@ -510,25 +520,30 @@ func particion_extendida(size int32, unit string, path string, type_ string, fit
 				copy(extendBoot.Part_name[:], "")
 				Modificar_archivo_ebr(&extendBoot, path, extendBoot.Part_start)
 				fmt.Println("PARTICION EXTENDIDA CREADA CORRECTAMENTE")
+				return "PARTICION CREDA CORRECTAMENTE"
 			}
 
 		} else {
 			fmt.Println("ERROR AL CREAR PARTICION EXTENDIDA ESPACIO INSUFICIENTE.   ESPACIO DISPONIBLE:", EspacioDisponible(path), "ESPACIO FALTANTE: ", (size - EspacioDisponible(path)))
+			return "Espacio insuficiente para crear la particion"
 		}
 
 	} else {
 		fmt.Println("ERROR,AL CREAR PARTICION YA EXISTE 4 PARTICIONES")
+		return "Ya se cuenta con el numero maximo de particiones"
 	}
-
+	return "PARTICION CREDA CORRECTAMENTE"
 }
 
-func particion_logica(size int32, unit string, path string, type_ string, fit string, name string) {
+func particion_logica(size int32, unit string, path string, type_ string, fit string, name string) string {
 	//os.Open sirve para leer el archivo nada mas y no para modificar
 	file, err := os.OpenFile(path, os.O_RDWR, 0777)
 	defer file.Close()
 
 	if err != nil {
 		log.Fatal("ERROR AL ABRIR ARCHIVO,ARCHIVO NO EXISTE", err)
+		file.Close()
+		return "No se encontro el disco"
 	}
 
 	var tamano_masterBoot int32 = int32(unsafe.Sizeof(MBR{}))
@@ -567,6 +582,8 @@ func particion_logica(size int32, unit string, path string, type_ string, fit st
 				if masterBoot.Mbr_partition[indice].Part_size < size {
 					//espacio insuficiente
 					fmt.Println("ERROR AL CREAR LOGICA ESPACIO INSUFICIENTE")
+					file.Close()
+					return "Espacio insuficiente para crear la particion"
 				} else {
 					extendedBoot.Part_status = 49
 					copy(extendedBoot.Part_fit[:], fit)
@@ -579,6 +596,8 @@ func particion_logica(size int32, unit string, path string, type_ string, fit st
 					//file.Seek(masterBoot.Mbr_partition[indice].Part_start,0);
 					Modificar_archivo_ebr(&extendedBoot, path, masterBoot.Mbr_partition[indice].Part_start) //espremor que no de erro aqui sino mandar el archiv abierto de una
 					fmt.Println("PARTICION LOGICA CREADA CORRECTAMENTE")
+					file.Close()
+					return "PARTICION CREADA CORRECTAMENTE"
 				}
 			} else {
 				for (extendedBoot.Part_next != -1) && (Ftell(file) < (masterBoot.Mbr_partition[indice].Part_size + masterBoot.Mbr_partition[indice].Part_start)) {
@@ -605,23 +624,27 @@ func particion_logica(size int32, unit string, path string, type_ string, fit st
 					//fwrite(&extendedBoot, sizeof(EBR), 1, fp)
 					Modificar_archivo_ebr(&extendedBoot, path, Ftell(file))
 					fmt.Println("PARTICION LOGICA CREADA CORRECTAMENTE")
-
+					file.Close()
+					return "PARTICION CREADA CORRECTAMENTE"
 				} else {
 					fmt.Println("ERROR la particion logica a crear excede el")
 					fmt.Println("espacio disponible de la particion extendida")
+					file.Close()
+					return "Espacio insuficiente para crear la particion"
 				}
 			}
 
 		} else {
 			fmt.Println("ERROR AL CREAR PARTICION LOGICA ESPACIO INSUFICIENTE.   ESPACIO DISPONIBLE:", espacio_disp, "ESPACIO FALTANTE: ", (size - espacio_disp))
+			file.Close()
+			return "Espacio insuficiente para crear la particion"
 		}
 
 	} else {
 		fmt.Println("ERROR AL CREAR PARTICION LOGICA,NO EXISTE EXTENDIDA")
+		file.Close()
+		return "No existe una particion EXTENDIDA"
 	}
-
-	file.Close()
-	//fin de particion logica
 }
 
 func leer_archivo(path string) MBR {
