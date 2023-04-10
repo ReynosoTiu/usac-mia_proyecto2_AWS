@@ -174,7 +174,7 @@ func Reconocer_Comando(texto_comando string) string {
 			}
 			ins_aux += string(texto_comando[i])
 		}
-
+		fmt.Println("El comando es " + ins_aux)
 		switch strings.ToLower(ins_aux) {
 		case "mkdisk":
 			return Reconocer_mkdisk(texto_comando, ins_aux)

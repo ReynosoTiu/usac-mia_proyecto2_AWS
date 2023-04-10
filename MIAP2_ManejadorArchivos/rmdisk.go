@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 )
@@ -8,6 +9,7 @@ import (
 func Ejecutar_rmdisk(path string) string {
 
 	if _, err := os.Stat(path); err == nil {
+		fmt.Println("path " + path)
 		e := os.Remove(path)
 		if e != nil {
 			log.Fatal(e)

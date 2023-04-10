@@ -51,18 +51,21 @@ export class CommandlineComponent implements OnInit {
               .then(res => {
                 this.textoArchivoResult += "Desea eliminar el disco";
                 if (res) {
-                  this.textoArchivoResult += "SI";
+                  this.textoArchivoResult += " SI\n";
                   this.commandlineService.enviarContenidoEEA(c)
                     .then(res => {
-                      this.textoArchivoResult += res;
+                      this.textoArchivoResult += res + "\n";
                     });
+                }else{
+                  this.textoArchivoResult += " NO\n";
                 }
-                this.textoArchivoResult += "NO";
+                
               })
           } else {
             this.commandlineService.enviarContenidoEEA(c)
               .then(res => {
-                this.textoArchivoResult += res;
+                console.log(res);
+                this.textoArchivoResult += res + "\n";
               });
           }
         }
