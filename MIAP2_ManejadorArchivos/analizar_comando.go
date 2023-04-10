@@ -174,7 +174,6 @@ func Reconocer_Comando(texto_comando string) string {
 			}
 			ins_aux += string(texto_comando[i])
 		}
-		fmt.Println("El comando es " + ins_aux)
 		switch strings.ToLower(ins_aux) {
 		case "mkdisk":
 			return Reconocer_mkdisk(texto_comando, ins_aux)
@@ -358,6 +357,7 @@ func Reconocer_Rmdisk(lista_comando string, comando_aux string) string {
 
 		} //fin de for
 
+		fmt.Println("MIPAT " + path)
 		/*__________________________ ELIMINAR ARCHIVO ______________________*/
 		if hay_path {
 			return Ejecutar_rmdisk(path)
