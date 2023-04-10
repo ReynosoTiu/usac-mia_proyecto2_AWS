@@ -1,22 +1,26 @@
 package main
 
 import (
-	"fmt"
-	"log"
 	"os"
 )
 
 func Ejecutar_rmdisk(path string) string {
-	fmt.Println("path " + path)
-	fmt.Println(os.Stat(path))
-	if _, err := os.Stat(path); err == nil {
 
+	archivo := path
+	if archivoExiste(archivo) {
 		e := os.Remove(path)
 		if e != nil {
-			log.Fatal(e)
+			return "Ocurrio un error al intentar eliminar el disco"
 		}
 		return "DISCO ELIMINADO CORRECTAMENTE"
+	} else {
+		return "DISCO NO ENCONTRADO"
 	}
+}
 
-	return "DISCO NO ENCONTRADO"
+func archivoExiste(ruta string) bool {
+	if _, err := os.Stat(ruta); os.IsNotExist(err) {
+		return false
+	}
+	return true
 }
