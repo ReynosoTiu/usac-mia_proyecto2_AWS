@@ -8,6 +8,7 @@ import (
 
 func Ejecutar_rmdisk(path string) string {
 	fmt.Println("path " + path)
+	fmt.Println(os.Stat(path))
 	if _, err := os.Stat(path); err == nil {
 
 		e := os.Remove(path)
