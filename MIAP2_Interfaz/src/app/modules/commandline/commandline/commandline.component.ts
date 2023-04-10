@@ -56,10 +56,10 @@ export class CommandlineComponent implements OnInit {
                     .then(res => {
                       this.textoArchivoResult += res + "\n";
                     });
-                }else{
+                } else {
                   this.textoArchivoResult += " NO\n";
                 }
-                
+
               })
           } else {
             this.commandlineService.enviarContenidoEEA(c)
