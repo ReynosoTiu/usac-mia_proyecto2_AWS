@@ -1,12 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"os"
 )
 
 func Ejecutar_rmdisk(path string) string {
 
 	archivo := path
+	fmt.Println(archivo)
 	if archivoExiste(archivo) {
 		e := os.Remove(path)
 		if e != nil {
@@ -16,11 +18,4 @@ func Ejecutar_rmdisk(path string) string {
 	} else {
 		return "DISCO NO ENCONTRADO"
 	}
-}
-
-func archivoExiste(ruta string) bool {
-	if _, err := os.Stat(ruta); os.IsNotExist(err) {
-		return false
-	}
-	return true
 }

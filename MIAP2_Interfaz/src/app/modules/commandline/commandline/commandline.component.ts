@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { HtmlInputEvent } from 'src/app/models/global.model';
 import { CommandlineService } from '../commandline.service';
 import { GtoastrService } from 'src/app/services/gtoastr.service';
@@ -14,6 +14,9 @@ export class CommandlineComponent implements OnInit {
   textoArchivoResult = "";
   disableBtn = false;
 
+  @ViewChild('textAr') textAr!: ElementRef<any>;
+  @ViewChild('textAr2') textAr2!: ElementRef<any>;
+
   constructor(
     private commandlineService: CommandlineService,
     private toastService: GtoastrService,
@@ -21,6 +24,12 @@ export class CommandlineComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
+  }
+
+  ngAfterViewInit() {
+    this.textAr2.nativeElement.value = '';
+    this.textAr.nativeElement.value = '';
   }
 
   cambiar() {
@@ -34,38 +43,42 @@ export class CommandlineComponent implements OnInit {
         const reader = new FileReader();
         reader.onload = () => {
           this.textoArchivoLeido = String(reader.result);
+          this.textAr.nativeElement.value = reader.result;
         }
         reader.readAsText(file);
       }
     }
   }
 
-  ejecutar() {
+  async ejecutar() {
     let lineasComando = this.textoArchivoLeido.split("\n");
     for (let comando of lineasComando) {
-      let c = comando.trim();
+      let c = comando.trim().replace(/\n/g, "").replace(/\r/g, "");
       if (c) {
         if (c.length > 5) {
           if (c.slice(0, 6) == "rmdisk") {
-            this.sweet.confirmAction("Confirmar", "¿Desea elimianar el disco?")
-              .then(res => {
+            await this.sweet.confirmAction("Confirmar", "¿Desea elimianar el disco?")
+              .then(async(res:any) => {
                 this.textoArchivoResult += "Desea eliminar el disco";
+                this.textAr2.nativeElement.value = this.textoArchivoResult;
                 if (res) {
                   this.textoArchivoResult += " SI\n";
-                  this.commandlineService.enviarContenidoEEA(c)
+                  this.textAr2.nativeElement.value = this.textoArchivoResult;
+                  await this.commandlineService.enviarContenidoEEA(c)
                     .then(res => {
                       this.textoArchivoResult += res + "\n";
+                      this.textAr2.nativeElement.value = this.textoArchivoResult;
                     });
                 } else {
                   this.textoArchivoResult += " NO\n";
+                  this.textAr2.nativeElement.value = this.textoArchivoResult;
                 }
-
               })
           } else {
-            this.commandlineService.enviarContenidoEEA(c)
+            await this.commandlineService.enviarContenidoEEA(c)
               .then(res => {
-                console.log(res);
                 this.textoArchivoResult += res + "\n";
+                this.textAr2.nativeElement.value = this.textoArchivoResult;
               });
           }
         }
@@ -73,11 +86,11 @@ export class CommandlineComponent implements OnInit {
     }
   }
 
-  get() {
-    this.commandlineService.consumirInicial();
-  }
-
   modificaTexto(event: any) {
     this.textoArchivoLeido = event.target.value;
+  }
+
+  onKeypressEvent(event:any){
+    return false;
   }
 }

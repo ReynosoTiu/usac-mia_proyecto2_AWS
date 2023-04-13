@@ -36,9 +36,10 @@ func (ls *LISTASIMPLE) Esta_Vacio() bool {
 	return ls.Primero == nil
 }
 
-func (ls *LISTASIMPLE) insertar_Nodo(path string, name string) int64 {
-	if existeArchivo(path) {
-		if Obtener_extension_archivo(path) == ".dk" {
+func (ls *LISTASIMPLE) insertar_Nodo(path string, name string) string {
+	particionesMontadas := ""
+	if archivoExiste(path) {
+		if Obtener_extension_archivo(path) == ".dsk" {
 			if Buscar_Nombre_P_E_L(path, name) == 1 {
 				ls.obtener_letra(path, name)
 				var new_Node NODO //= nil //Nodo_mount(path,name,letra_temp,numero_temp,obtener_id(),contador_temp);
@@ -53,25 +54,24 @@ func (ls *LISTASIMPLE) insertar_Nodo(path string, name string) int64 {
 					new_Node.Siguiente = nil
 					ls.Ultimo = &new_Node
 				}
-				ls.mostrar_particiones()
+				particionesMontadas = ls.mostrar_particiones()
 
 			} else {
 				fmt.Println("ERROR AL MONTAR, PARTICION NO EXISTE")
-				return -1
+				return "No existe la particion que se quiere montar"
 
 			}
 
 		} else {
 			fmt.Println("ERROR EN MONTRAR EXTENSION DESCONOCIDO")
-			return -1
+			return "No se encuentra el disco que aloja la particion .dsk"
 		}
 
 	} else {
 		fmt.Println("ERROR EN MONTRAR ARCHIVO NO EXISTE")
-		return -1
-
+		return "No se encuentra el disco que aloja la particion"
 	}
-	return 0
+	return "PARTICION MONTADA EXITOSAMENTE\n" + particionesMontadas
 }
 
 /*____________ FIN DE INSERTAR NODO ________*/
@@ -112,18 +112,19 @@ func (ls *LISTASIMPLE) borrar_nodo(id string) {
 
 } /*____________ fin de borrar_nodo _______*/
 
-func (ls *LISTASIMPLE) mostrar_particiones() {
-	fmt.Println("\t---------------------------------")
-	fmt.Println("\t|       Particiones Montadas    |")
-	fmt.Println("\t---------------------------------")
-	fmt.Println("\t|        Nombre     |   ID      |")
-	fmt.Println("\t---------------------------------")
+func (ls *LISTASIMPLE) mostrar_particiones() string {
+	respuesta := "\t---------------------------------\n"
+	respuesta += "\t|       Particiones Montadas     |\n"
+	respuesta += "\t---------------------------------\n"
+	respuesta += "\t|        Nombre       |   ID          \t|\n"
+	respuesta += "\t---------------------------------\n"
 	var aux *NODO = ls.Primero
 	for aux != nil {
-		fmt.Println("\t|\t", aux.Name, "\t|\t", aux.Id, "\t|")
-		fmt.Println("\t---------------------------------")
+		respuesta += "\t|\t" + aux.Name + "\t|\t" + aux.Id + "\t|\n"
+		respuesta += "\t---------------------------------\n"
 		aux = aux.Siguiente
 	}
+	return respuesta
 }
 
 func (ls *LISTASIMPLE) obtener_letra(path string, name string) {
@@ -173,7 +174,7 @@ func (ls *LISTASIMPLE) obtener_id() string {
 	//SE UTILIZO EL CARNET DEL AUX 06
 	//fmt.Println("Numero Tem: ",ls.Numero_temp)
 	//strconv.Itoa(int(ls.Numero_temp))
-	return "15" + string(strconv.Itoa(int(ls.Numero_temp))) + string(ls.Letra_temp)
+	return "26" + string(strconv.Itoa(int(ls.Numero_temp))) + string(ls.Letra_temp)
 }
 
 //mount -path=/home/dia/disco.dk -name=Particion1

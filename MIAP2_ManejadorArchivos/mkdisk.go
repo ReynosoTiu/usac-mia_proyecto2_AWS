@@ -98,7 +98,6 @@ func Crear_archivo(size int32, path string, fit string, unit string) string {
 
 func EscribirBytes(file *os.File, bytes []byte) {
 	_, err := file.Write(bytes)
-
 	if err != nil {
 		log.Fatal(err)
 	}

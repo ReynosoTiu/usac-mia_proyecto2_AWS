@@ -15,47 +15,52 @@ func Print_fdisk() {
 
 func Crear_particion(size int32, unit string, path string, type_ string, fit string, name string) string {
 
-	if type_ == "p" {
-		if buscar_indice_libre(path, "p") != -1 {
-			if Buscar_Nombre_P_E_L(path, name) == -1 {
+	if type_ == "p" || type_ == "" {
+		type_ = "p"
+		switch Buscar_Nombre_P_E_L(path, name) {
+		case -1:
+			if buscar_indice_libre(path, "p") != -1 {
 				return particion_primaria(size, unit, path, type_, fit, name)
 			} else {
-				fmt.Println("ERROR AL CREAR PARTICION CON NOMBRE REPETIDO")
-				return "Ya existe una particion con el nombre ingresado | no se encuentra el disco"
+				fmt.Println("ERROR,YA EXISTEN 4 PARTICIONES")
+				return "Ya se cuenta con el numero maximo de particiones"
 			}
-		} else {
-			fmt.Println("ERROR,YA EXISTEN 4 PARTICIONES")
-			return "Ya se cuenta con el numero maximo de particiones primarias"
+		case -2:
+			return "No se encuentra el disco donde se desea crear la particion"
+		case 1:
+			return "Ya existe una particion con el nombre ingresado"
+		default:
+			return "Error al abrir el archivo"
 		}
-
 	} else if type_ == "e" {
-		if buscar_indice_libre(path, "e") == -1 {
-			if Buscar_Nombre_P_E_L(path, name) == -1 {
+		switch Buscar_Nombre_P_E_L(path, name) {
+		case -1:
+			if buscar_indice_libre(path, "e") == -1 {
 				return particion_extendida(size, unit, path, type_, fit, name)
 			} else {
-				fmt.Println("ERROR AL CREAR PARTICION CON NOMBRE REPETIDO")
-				return "Ya existe una particion con el nombre ingresado | no se encuentra el disco"
+				fmt.Println("ERROR,YA EXISTE UNA PARTICION EXTENDIDA")
+				return "Ya se cuenta con una particion extendida"
 			}
-		} else {
-			fmt.Println("ERROR,YA EXISTE UNA PARTICION EXTENDIDA")
-			return "Ya se cuenta con una particion extendida"
+		case -2:
+			return "No se encuentra el disco donde se desea crear la particion"
+		case 1:
+			return "Ya existe una particion con el nombre ingresado"
+		default:
+			return "Error al abrir el archivo"
 		}
-
 	} else if type_ == "l" {
-		if Buscar_Nombre_P_E_L(path, name) == -1 {
+		switch Buscar_Nombre_P_E_L(path, name) {
+		case -1:
 			return particion_logica(size, unit, path, type_, fit, name)
-		} else {
-			fmt.Println("ERROR AL CREAR PARTICION CON NOMBRE REPETIDO")
-			return "Ya existe una particion con el nombre ingresado | no se encuentra el disco"
+		case -2:
+			return "No se encuentra el disco donde se desea crear la particion"
+		case 1:
+			return "Ya existe una particion con el nombre ingresado"
+		default:
+			return "Error al abrir el archivo"
 		}
-
 	} else {
-		if Buscar_Nombre_P_E_L(path, name) == -1 {
-			return particion_primaria(size, unit, path, type_, fit, name)
-		} else {
-			fmt.Println("ERROR AL CREAR PARTICION CON NOMBRE REPETIDO")
-			return "Ya existe una particion con el nombre ingresado | no se encuentra el disco"
-		}
+		return "Valor del parametro TYPE incorrecto: " + type_
 	}
 }
 
@@ -725,6 +730,12 @@ func Modificar_archivo_ebr(extendBoot *EBR, path string, moverPuntero int32) {
 func Buscar_Nombre_P_E_L(path string, name string) int32 {
 
 	//os.Open sirve para leer el archivo nada mas y no para modificar
+
+	// -2 No existe el disco
+	if !existeArchivo(path) {
+		return -2
+	}
+
 	file, err := os.OpenFile(path, os.O_RDWR, 0777)
 	defer file.Close()
 

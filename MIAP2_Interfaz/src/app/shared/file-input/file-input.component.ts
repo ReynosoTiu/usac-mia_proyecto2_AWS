@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-file-input',
@@ -7,12 +7,19 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 })
 export class FileInputComponent implements OnInit {
 
+  @ViewChild('inputFile') inputFile!: ElementRef<any>;
   @Input() accept = '';
   @Output() changee = new EventEmitter<any>();
 
-  constructor() { }
+  constructor() { 
+  }
 
   ngOnInit(): void {
+  }
+
+  abrirDialogo(){
+    this.inputFile.nativeElement.value = '';
+    this.inputFile.nativeElement.click();
   }
 
   seleccionar(event:any){

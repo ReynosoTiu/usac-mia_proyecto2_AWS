@@ -10,7 +10,7 @@ import (
 	"unsafe"
 )
 
-func Log_in(path string, id string, usuario string, password string) int32 {
+func Log_in(path string, id string, usuario string, password string) string {
 	var aux_nodo *NODO = listaS.obtenerNodo(id)
 	if aux_nodo != nil {
 		index, inicio, tamano, es_logica, fit_ := Buscar_Indice_P_E_L(aux_nodo.Path, aux_nodo.Name) //returna 4 variables
@@ -21,7 +21,7 @@ func Log_in(path string, id string, usuario string, password string) int32 {
 
 		if err != nil {
 			log.Fatal("ERROR AL ABRIR ARCHIVO,ARCHIVO NO EXISTE", err)
-			return -1
+			return "Ocurrio un error al extraer el disco que contiene la particion"
 		}
 
 		if index != -1 {
@@ -56,18 +56,20 @@ func Log_in(path string, id string, usuario string, password string) int32 {
 					actualSesion.Path = aux_nodo.Path
 					copy(actualSesion.Fit[:], string(fit_)) //aqui arreglar a ver que pex
 					actualSesion.hay_Sesion = existeUsuario
-					return 0
+					return "INICIO DE SESION EXITOSO"
 				}
 			} else {
 				fmt.Println("ERROR DEBES CERRAR SESION PARA INICIAR OTRA SESION")
-				return 0
+				return "Un usuario ya se encuentra logueado"
 			}
 			//return -1
+		} else {
+			return "Hubo un error al obtener la particion del ID ingresado"
 		}
 
 	}
 
-	return -1
+	return "No se encuentra particion montada con el ID ingresado"
 }
 
 func verificarDatos(user string, password string, direccion string) (int32, bool) {

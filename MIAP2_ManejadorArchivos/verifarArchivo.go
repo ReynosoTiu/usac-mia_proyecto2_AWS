@@ -12,7 +12,6 @@ import (
 
 func existeArchivo(path string) bool {
 	filiInfo, err := os.Stat(path)
-
 	if err != nil {
 		fmt.Println("ERROR EL ARCHIVO NO EXISTE")
 		return false

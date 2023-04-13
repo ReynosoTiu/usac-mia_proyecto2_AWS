@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strings"
+	"os"
 )
 
 func getHola(w http.ResponseWriter, r *http.Request) {
@@ -57,8 +57,7 @@ func Carga(w http.ResponseWriter, r *http.Request) {
 }
 
 func ejecutar_contenido_json(contenido string) string {
-	var temp string = strings.ReplaceAll(contenido, "\r", "")
-	return Reconocer_Comando(temp + "\n")
+	return Reconocer_Comando(contenido)
 	// res1 := strings.Split(temp, "\n")
 	// var result = ""
 	// for i := 0; i < len(res1); i++ {
@@ -67,4 +66,11 @@ func ejecutar_contenido_json(contenido string) string {
 	// 	}
 	// }
 	// return result
+}
+
+func archivoExiste(ruta string) bool {
+	if _, err := os.Stat(ruta); os.IsNotExist(err) {
+		return false
+	}
+	return true
 }

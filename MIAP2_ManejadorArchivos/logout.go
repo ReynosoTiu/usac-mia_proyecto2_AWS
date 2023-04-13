@@ -2,7 +2,7 @@ package main
 
 import "bytes"
 
-func Logout() int32 {
+func Logout() string {
 	if actualSesion.hay_Sesion {
 		actualSesion.Id_user = -1
 		actualSesion.Id_grp = -1
@@ -12,10 +12,10 @@ func Logout() int32 {
 		//temp := bytes.Repeat([]byte{0}, len(actualSesion.Fit[:]))
 		copy(actualSesion.Fit[:], bytes.Repeat([]byte{0}, len(actualSesion.Fit[:])))
 		actualSesion.hay_Sesion = false
-		return 0
+		return "SESION CERRADA EXITOSAMENTE"
 
 	} else {
-		return 1
+		return "No existe una sesion activa"
 
 	}
 	//return -1

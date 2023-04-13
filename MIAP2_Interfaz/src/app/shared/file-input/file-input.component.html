@@ -1,2 +1,2 @@
-<button (click)="inputFile.click()" class="btn btn-sm btn-secondary"> Examinar </button>
-<input style="display: none;" type="file" #inputFile (change)="seleccionar($event)" [accept]="accept">
+<button (click)="abrirDialogo()" class="btn btn-sm btn-secondary"> Examinar </button>
+<input multiple style="display: none;" type="file" #inputFile (change)="seleccionar($event)" [accept]="accept">

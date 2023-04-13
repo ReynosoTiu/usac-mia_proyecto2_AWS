@@ -18,11 +18,11 @@ export class SweetalertService {
       cancelButtonColor: '#d33',
       confirmButtonText: 'SI',
       cancelButtonText: 'NO'
-    }).then((result) => {
+    }).then((result:any) => {
       if (result.isConfirmed) {
         return true;
       }
       return false;
-    }).catch(err => { return false })
+    }).catch((err:any) => { return false })
   }
 }

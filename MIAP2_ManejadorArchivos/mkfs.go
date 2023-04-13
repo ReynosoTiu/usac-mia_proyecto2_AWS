@@ -10,35 +10,37 @@ import (
 	"unsafe"
 )
 
-func EjecutarMkfs(id string, type_ string) int32 {
+func EjecutarMkfs(id string, type_ string) string {
+	if type_ == "full" || type_ == "" {
+	} else {
+		fmt.Println("ERROR  VALOR DESCONOCIDO DE TYPE: ", type_)
+		return "Valor del parametro TYPE incorrecto"
+	}
 	var aux *NODO = listaS.obtenerNodo(id)
 	if aux != nil {
+		masterBoot := leer_archivo(aux.Path)
+		for _, a := range masterBoot.Mbr_partition {
+			if string(bytes.Trim(a.Part_name[:], "\x00")) == aux.Name {
+				if a.Part_type == 101 {
+					return "No se permite formatear una particion extendida"
+				}
+			}
+		}
 		index, inicio, tamano, es_logica, _ := Buscar_Indice_P_E_L(aux.Path, aux.Name)
 		if index != -1 {
 			if es_logica {
 				inicio += int32(unsafe.Sizeof(EBR{}))
 			}
-
-			//Ver_particion_Primaria_Extendida_Logica(aux.Path)
-			if type_ == "full" {
-				formatearEXT2(inicio, tamano, aux.Path)
-			} else if type_ == "" {
-				formatearEXT2(inicio, tamano, aux.Path)
-			} else {
-				fmt.Println("ERROR  VALOR DESCONOCIDO DE TYPE: ", type_)
-				return -1
-			}
-			//Ver_particion_Primaria_Extendida_Logica(aux.Path)
+			formatearEXT2(inicio, tamano, aux.Path)
+			return "PARTICION FORMATEADA EXITOSAMENTE CON EXT2"
 		} else {
 			fmt.Println("ERROR  NO COINCIDE EN MKFS")
-			return -1
+			return "No se encuentra una particion montada con el ID ingresado"
 		}
 	} else {
 		fmt.Println("ERROR ID NO MONTADA")
-		return -1
+		return "No se encuentra una particion montada con el ID ingresado"
 	}
-
-	return 0
 }
 
 func Buscar_Indice_P_E_L(path string, name string) (int32, int32, int32, bool, []byte) {

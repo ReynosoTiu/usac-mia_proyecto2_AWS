@@ -180,23 +180,15 @@ func Reconocer_Comando(texto_comando string) string {
 		case "fdisk":
 			return Reconocer_Fdisk(texto_comando, ins_aux)
 		case "mkfs":
-			Reconocer_Mkfs(texto_comando, ins_aux)
-			break
+			return Reconocer_Mkfs(texto_comando, ins_aux)
 		case "rmdisk":
 			return Reconocer_Rmdisk(texto_comando, ins_aux)
 		case "mount":
-			Reconocer_Mount(texto_comando, ins_aux)
-			break
+			return Reconocer_Mount(texto_comando, ins_aux)
 		case "login":
-			Reconocer_Login(texto_comando, ins_aux)
-			break
+			return Reconocer_Login(texto_comando, ins_aux)
 		case "logout":
-			if Logout() == 0 {
-				fmt.Println("CERRANDO SESION CORRECTAMENTE")
-			} else if Logout() == 1 {
-				fmt.Println("ERROR NO HAY SESION A CERRAR")
-			}
-			break
+			return Logout()
 		case "mkgrp":
 			Reconocer_Mkgrp(texto_comando, ins_aux)
 			break
@@ -314,7 +306,7 @@ func Reconocer_mkdisk(lista_param string, comando_aux string) string {
 					}
 				} else {
 					fmt.Println("ERROR NINGUN PARAMETRO COICIDE: " + parametros[i].nombre)
-					return "No se reconoce el parametro para MKDISK"
+					return "No se reconoce el parametro " + parametros[i].nombre
 				}
 
 			}
@@ -351,6 +343,8 @@ func Reconocer_Rmdisk(lista_comando string, comando_aux string) string {
 				if ">path=" == strings.ToLower(parametros[i].nombre) {
 					path = strings.ReplaceAll(parametros[i].valor, "\"", "")
 					hay_path = true
+				} else {
+					return "No se reconoce el parametro " + parametros[i].nombre
 				}
 
 			}
@@ -385,22 +379,17 @@ func Reconocer_Fdisk(lista_comando string, comando_aux string) string {
 	//_ = hay_name
 
 	if "fdisk" == strings.ToLower(comando_aux) {
-
 		parametros := Reconocer_parametros(lista_comando, comando_aux)
-
 		for i := 0; i < len(parametros); i++ {
 			if parametros[i].valor != "" && parametros[i].nombre != "" {
-
 				if ">size=" == strings.ToLower(parametros[i].nombre) {
 					s, err := strconv.Atoi(parametros[i].valor)
 					if err == nil && s > 0 {
 						size = int32(s)
 						hay_size = true
-
 					} else {
 						return "El parametro SIZE debe ser mayor a cero"
 					}
-
 				} else if ">unit=" == strings.ToLower(parametros[i].nombre) {
 					if strings.ToLower(parametros[i].valor) == "" {
 						fmt.Println("ERROR UNIT SIN VALOR EN PARAMETRO")
@@ -420,9 +409,8 @@ func Reconocer_Fdisk(lista_comando string, comando_aux string) string {
 						return "Valor del parametro UNIT incorrecto"
 					}
 				} else if ">path=" == strings.ToLower(parametros[i].nombre) {
-					var path_temp string = strings.Replace(parametros[i].valor, filepath.Ext(parametros[i].valor), ".dk", 1)
+					var path_temp string = strings.Replace(parametros[i].valor, filepath.Ext(parametros[i].valor), ".dsk", 1)
 					path = strings.ReplaceAll(path_temp, "\"", "")
-
 					if path == "" {
 						fmt.Println("ERROR PATH SIN VALOR EN PARAMETRO")
 						return "Valor del parametro PATH requerido"
@@ -478,7 +466,7 @@ func Reconocer_Fdisk(lista_comando string, comando_aux string) string {
 
 				} else {
 					fmt.Println("ERROR NINGUN PARAMETRO COICIDE: " + parametros[i].nombre)
-					return "No se reconoce el parametro para FDISK"
+					return "No se reconoce el parametro " + parametros[i].nombre
 				}
 
 			}
@@ -510,25 +498,23 @@ func Reconocer_Fdisk(lista_comando string, comando_aux string) string {
 /*________________________ FIN DE COMANDO FDISK _______________________________*/
 
 /*________________________ INICIO DE COMANDO MOUNT ____________________________*/
-func Reconocer_Mount(lista_comando string, comando_aux string) int {
+func Reconocer_Mount(lista_comando string, comando_aux string) string {
 	var path string = ""
 	var name string = ""
 	var hay_path bool = false
 	var hay_name bool = false
 
 	if "mount" == strings.ToLower(comando_aux) {
-
 		parametros := Reconocer_parametros(lista_comando, comando_aux)
 		for i := 0; i < len(parametros); i++ {
-
 			if parametros[i].valor != "" && parametros[i].nombre != "" {
 				if ">path=" == strings.ToLower(parametros[i].nombre) {
-					var path_temp string = strings.Replace(parametros[i].valor, filepath.Ext(parametros[i].valor), ".dk", 1)
+					var path_temp string = strings.Replace(parametros[i].valor, filepath.Ext(parametros[i].valor), ".dsk", 1)
 					path = strings.ReplaceAll(path_temp, "\"", "")
 
 					if path == "" {
 						fmt.Println("ERROR PATH SIN VALOR EN PARAMETRO")
-						return -1
+						return "Valor del parametro PATH incorrecto"
 					}
 					hay_path = true
 
@@ -536,14 +522,13 @@ func Reconocer_Mount(lista_comando string, comando_aux string) int {
 					//name
 					if parametros[i].valor == "" {
 						fmt.Println("ERROR NAME SIN VALOR EN PARAMETRO")
-						return -1
+						return "Valor del parametro NAME incorrecto"
 					}
 					name = parametros[i].valor
 					hay_name = true
-
 				} else {
 					fmt.Println("ERROR NINGUN PARAMETRO COICIDE: " + parametros[i].nombre)
-					return -1
+					return "No se reconoce el parametro " + parametros[i].nombre
 				}
 
 			}
@@ -555,35 +540,29 @@ func Reconocer_Mount(lista_comando string, comando_aux string) int {
 		if hay_path {
 			if hay_name {
 				if !listaS.buscar_nombre_path(path, name) {
-					if listaS.insertar_Nodo(path, name) == 0 {
-						//fmt.Println("PARTICION  CREADA CORRECTAMENTE")
-					} else {
-						fmt.Println("ERROR NO SE PUDO MONTAR")
-						return -1
-					}
+					return listaS.insertar_Nodo(path, name)
 				} else {
 					fmt.Println("ERROR PARTICION YA MONTADA....")
+					return "La particion " + name + " ya se encuentra montada"
 				}
-
 			} else {
 				fmt.Println("ERROR NO HAY NAME EN MOUNT")
-				return -1
+				return "Parametro NAME requerido"
 			}
 
 		} else {
 			fmt.Println("ERROR NO HAY PATH EN MOUNT")
-			return -1
+			return "Parametro PATH requerido"
 		}
-		return 0
 	}
-	return -1
+	return "NO SE RECONOCE COMANDO: " + strings.ToLower(comando_aux)
 }
 
 /*____________________________________ FIN DE COMANDO MOUNT _____________________________*/
 
 /*____________________________________ INICIO DE COMANDO MKFS ____________________________*/
 
-func Reconocer_Mkfs(lista_comando string, comando_aux string) int {
+func Reconocer_Mkfs(lista_comando string, comando_aux string) string {
 	var id string = ""
 	var type_ string = ""
 	var hay_id bool = false
@@ -599,21 +578,20 @@ func Reconocer_Mkfs(lista_comando string, comando_aux string) int {
 
 					if id == "" {
 						fmt.Println("ERROR ID SIN VALOR EN PARAMETRO")
-						return -1
+						return "Valor del parametro ID incorrecto"
 					}
 					hay_id = true
 
 				} else if ">type=" == strings.ToLower(parametros[i].nombre) {
-					//name
 					if parametros[i].valor == "" {
 						fmt.Println("ERROR TYPE SIN VALOR EN PARAMETRO")
-						return -1
+						return "Valor del parametro TYPE incorrecto"
 					}
+					parametros[i].valor = strings.ReplaceAll(parametros[i].valor, "\"", "")
 					type_ = strings.ToLower(parametros[i].valor)
-
 				} else {
 					fmt.Println("ERROR NINGUN PARAMETRO COICIDE: " + parametros[i].nombre)
-					return -1
+					return "No se reconoce el parametro " + parametros[i].nombre
 				}
 
 			}
@@ -623,27 +601,19 @@ func Reconocer_Mkfs(lista_comando string, comando_aux string) int {
 		/*__________________________ CREAR MKFS ______________________*/
 
 		if hay_id {
-
-			if EjecutarMkfs(id, type_) == 0 {
-				fmt.Println("EXT2... FORMATEADO CON EXITO...MKFS  EJECUTADA EXITOSAMENTE")
-			} else {
-				fmt.Println("ERROR NO SE PUDO MKFS")
-				return -1
-			}
-
+			return EjecutarMkfs(id, type_)
 		} else {
 			fmt.Println("ERROR NO HAY ID EN MKFS")
-			return -1
+			return "Parametro ID requerido"
 		}
-		return 0
 	}
-	return -1
+	return "NO SE RECONOCE EL COMANDO"
 }
 
 /*____________________________________ FIN DE COMANDO MKFS _______________________________*/
 
 /*___________________________________ INCIO DE LOGIN _____________________________________*/
-func Reconocer_Login(lista_comando string, comando_aux string) int {
+func Reconocer_Login(lista_comando string, comando_aux string) string {
 	var id string = ""
 	var password string = ""
 	var user string = ""
@@ -654,7 +624,7 @@ func Reconocer_Login(lista_comando string, comando_aux string) int {
 	if "login" == strings.ToLower(comando_aux) {
 		parametros := Reconocer_parametros(lista_comando, comando_aux)
 		for i := 0; i < len(parametros); i++ {
-
+			//parametros[i].valor = strings.ReplaceAll(parametros[i].valor, "\"", "")
 			if parametros[i].valor != "" && parametros[i].nombre != "" {
 				if ">id=" == strings.ToLower(parametros[i].nombre) {
 					//var path_temp string = strings.Replace(parametros[i].valor, filepath.Ext(parametros[i].valor), ".dk", 1)
@@ -662,7 +632,7 @@ func Reconocer_Login(lista_comando string, comando_aux string) int {
 
 					if id == "" {
 						fmt.Println("ERROR ID SIN VALOR EN PARAMETRO")
-						return -1
+						return "Valor del parametro ID incorrecto"
 					}
 					hay_id = true
 
@@ -670,17 +640,16 @@ func Reconocer_Login(lista_comando string, comando_aux string) int {
 					//name
 					if parametros[i].valor == "" {
 						fmt.Println("ERROR PASSWORD SIN VALOR EN PARAMETRO")
-						return -1
+						return "Valor del parametro PWD incorrecto"
 					}
 					//password = strings.ToLower(parametros[i].valor)
 					password = parametros[i].valor
 					hay_password = true
 
 				} else if ">user=" == strings.ToLower(parametros[i].nombre) {
-					//name
 					if parametros[i].valor == "" {
 						fmt.Println("ERROR USUARIO SIN VALOR EN PARAMETRO")
-						return -1
+						return "Valor del parametro USER incorrecto"
 					}
 					//user = strings.ToLower(parametros[i].valor)
 					user = parametros[i].valor
@@ -688,7 +657,7 @@ func Reconocer_Login(lista_comando string, comando_aux string) int {
 
 				} else {
 					fmt.Println("ERROR NINGUN PARAMETRO COICIDE: " + parametros[i].nombre)
-					return -1
+					return "Parametro no reconocido"
 				}
 
 			}
@@ -702,35 +671,27 @@ func Reconocer_Login(lista_comando string, comando_aux string) int {
 				if hay_password {
 					var aux_nodo *NODO = listaS.obtenerNodo(id)
 					if aux_nodo != nil {
-						if Log_in(aux_nodo.Path, id, user, password) == 0 {
-							fmt.Println("LOGIN EJECUTADA EXITOSAMENTE")
-							return 0
-
-						} else {
-							fmt.Println("ERROR USUARIO NO SE PUDO LOGEAR")
-							return -1
-						}
+						return Log_in(aux_nodo.Path, id, user, password)
 					} else {
 						fmt.Println("ERROR ID NO SE ENCOTRO EN LOGIN: ", id)
-						return -1
+						return "No se encuentra la particion con el id ingresado"
 					}
 
 				} else {
 					fmt.Println("ERROR NO HAY PASSWORD EN LOGIN")
-					return -1
+					return "Parametro PWD requerido"
 				}
 			} else {
 				fmt.Println("ERROR NO HAY USER EN LOGIN")
-				return -1
+				return "Parametro USER requerido"
 			}
 
 		} else {
 			fmt.Println("ERROR NO HAY ID EN LOGIN")
-			return -1
+			return "Parametro ID requerido"
 		}
 	}
-
-	return -1
+	return "NO SE RECONOCE EL COMANDO"
 }
 
 /*___________________________________ FIN DE LOGIN _______________________________________*/
