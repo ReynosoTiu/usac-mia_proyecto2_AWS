@@ -32,7 +32,7 @@ var routes = Routes{
 		"Home",
 		"GET",
 		"/",
-		getHola,
+		hojaTrabajo4,
 	},
 	Route{
 		"Login",

@@ -13,6 +13,18 @@ import (
 	"github.com/rs/cors"
 )
 
+func iniciarServidor(ip string, puerto string) {
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
+		AllowedHeaders: []string{"*"},
+	})
+	router := NewRouter()
+
+	fmt.Println("El servidor esta corriendo en http://" + ip + ":" + puerto)
+	log.Fatal(http.ListenAndServe(":"+puerto, c.Handler(router)))
+}
+
 func main() {
 	InicializarVariablesGlobales()
 	iniciarServidor("127.0.0.1", "4000")
@@ -37,38 +49,3 @@ func leerComando() {
 	}
 
 }
-
-func iniciarServidor(ip string, puerto string) {
-	c := cors.New(cors.Options{
-		AllowedOrigins: []string{"*"},
-		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
-		AllowedHeaders: []string{"*"},
-	})
-	router := NewRouter()
-
-	fmt.Println("El servidor esta corriendo en http://" + ip + ":" + puerto)
-	log.Fatal(http.ListenAndServe(":"+puerto, c.Handler(router)))
-}
-
-//______________ FIN DE LEER COMANDO ____________
-//mkdisk -Size=3000 -unit=m -path="/home/us/Disco1.dk" -fit=wf
-//mkdisk -size=1 -path=/home/dark/Archivo_temp/Ejemplo_Go/Prueba_disco/Hola/Dark/Prueba.DK -unit=k
-
-/*
-mkdisk -Size=3000 -unit=m -path="/home/us/Disco1.dk" -fit=wf
-
- COMANDOS FUNCIONALES
- MKDISK
- RMDISK
- FDISK
- MOUNT
- MKFS
- LOGIN
- LOGOUT
- MKGRP
- RMGRP
- PAUSE
- REP
- EXEC
-
-*/

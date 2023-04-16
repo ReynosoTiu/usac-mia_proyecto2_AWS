@@ -8,10 +8,18 @@ import (
 	"os"
 )
 
-func getHola(w http.ResponseWriter, r *http.Request) {
+type Payload struct {
+	Carnet string `json:"carnet"`
+	Nombre string `json:"nombre"`
+}
+
+func hojaTrabajo4(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode("HOLA MUNDO")
-	//fmt.Fprintf(w, "Hola MUndo")
+	p := Payload{
+		Carnet: "201345126",
+		Nombre: "José Luis Reynoso Tiu",
+	}
+	json.NewEncoder(w).Encode(p)
 }
 
 type inicioS struct {
