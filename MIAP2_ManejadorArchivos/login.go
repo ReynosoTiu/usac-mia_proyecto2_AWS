@@ -135,7 +135,7 @@ func Usuario_Contrasena(cadena []byte, user string, pass string) (int32, bool) {
 				if string(indice_grupo_usuario[3]) == user {
 					if string(indice_grupo_usuario[4]) == pass {
 						if string(indice_grupo_usuario[0]) != "0" {
-							fmt.Println("CONVERTIENDOME EN STRING:", string(indice_grupo_usuario[0]))
+							//fmt.Println("CONVERTIENDOME EN STRING:", string(indice_grupo_usuario[0]))
 							intID, _ := strconv.Atoi(string(indice_grupo_usuario[0]))
 							var id int32 = int32(intID)
 							return id, true

@@ -6,9 +6,17 @@ import (
 	"strconv"
 )
 
-func Crear_Mkusr(usuario string, pass string, grupo string) int {
-	if len(usuario) > 10 && len(grupo) > 10 {
-		return -1
+func Crear_Mkusr(usuario string, pass string, grupo string) string {
+	if len(usuario) > 10 {
+		return "Valor del parametro USER debe tener maximo 10 caracteres"
+	}
+
+	if len(pass) > 10 {
+		return "Valor del parametro PWD debe tener maximo 10 caracteres"
+	}
+
+	if len(grupo) > 10 {
+		return "Valor del parametro GRP debe tener maximo 10 caracteres"
 	}
 
 	if buscarGrupo(grupo, actualSesion.Path) != -1 {
@@ -18,11 +26,13 @@ func Crear_Mkusr(usuario string, pass string, grupo string) int {
 			var datos string = strconv.Itoa(id) + ",U," + grupo + "," + usuario + "," + pass + "\n"
 			agregarUsersTXT1(datos, actualSesion.Path)
 
-			return 0
+			return "USUARIO CREADO EXITOSAMENTE"
+		} else {
+			return "El usuario ya existe"
 		}
 
 	}
-	return -1
+	return "Grupo no encontrado"
 }
 
 func buscarUsuario(name string) bool {

@@ -190,15 +190,12 @@ func Reconocer_Comando(texto_comando string) string {
 		case "logout":
 			return Logout()
 		case "mkgrp":
-			Reconocer_Mkgrp(texto_comando, ins_aux)
-			break
+			return Reconocer_Mkgrp(texto_comando, ins_aux)
 		case "rmgrp":
-			Reconocer_Rmgrp(texto_comando, ins_aux)
-			break
-		case "mkusr":
-			Reconocer_Mkusr(texto_comando, ins_aux)
-			break
-		case "rmusr":
+			return Reconocer_Rmgrp(texto_comando, ins_aux)
+		case "mkuser":
+			return Reconocer_Mkusr(texto_comando, ins_aux)
+		case "rmuser":
 			Reconocer_Rmusr(texto_comando, ins_aux)
 			break
 		case "mkdir":
@@ -697,7 +694,7 @@ func Reconocer_Login(lista_comando string, comando_aux string) string {
 /*___________________________________ FIN DE LOGIN _______________________________________*/
 
 /*__________________________________  INICIO DE MKGRP ___________________________________*/
-func Reconocer_Mkgrp(lista_comando string, comando_aux string) int {
+func Reconocer_Mkgrp(lista_comando string, comando_aux string) string {
 	var name string = ""
 	var hay_name bool = false
 
@@ -713,13 +710,13 @@ func Reconocer_Mkgrp(lista_comando string, comando_aux string) int {
 
 					if name == "" {
 						fmt.Println("ERROR NAME SIN VALOR EN PARAMETRO")
-						return -1
+						return "Valor del parametro NAME incorrecto"
 					}
 					hay_name = true
 
 				} else {
 					fmt.Println("ERROR NINGUN PARAMETRO COICIDE: " + parametros[i].nombre)
-					return -1
+					return "Parametro no reconocido"
 				}
 
 			}
@@ -729,26 +726,20 @@ func Reconocer_Mkgrp(lista_comando string, comando_aux string) int {
 		/*__________________________ CREAR MKGRP ______________________*/
 
 		if hay_name {
-			if Crear_Mkgrp(name) == 0 {
-				//fmt.Println("LOGIN EJECUTADA EXITOSAMENTE")
-				return 0
-			} else {
-				fmt.Println("ERROR USUARIO NO SE PUDO LOGEAR")
-				return -1
-			}
+			return Crear_Mkgrp(name)
 		} else {
 			fmt.Println("ERROR NO HAY NAME EN MKGRP")
-			return -1
+			return "Parametro NAME requerido"
 		}
 	}
 
-	return -1
+	return "COMANDO NO RECONOCIDO"
 }
 
 /*__________________________________  FIN DE MKGRP ______________________________________*/
 
 /*__________________________________ INICO DE RMGRP ____________________________________*/
-func Reconocer_Rmgrp(lista_comando string, comando_aux string) int {
+func Reconocer_Rmgrp(lista_comando string, comando_aux string) string {
 	var name string = ""
 	var hay_name bool = false
 
@@ -764,13 +755,13 @@ func Reconocer_Rmgrp(lista_comando string, comando_aux string) int {
 
 					if name == "" {
 						fmt.Println("ERROR NAME SIN VALOR EN PARAMETRO")
-						return -1
+						return "Valor del parametro NAME incorrecto"
 					}
 					hay_name = true
 
 				} else {
 					fmt.Println("ERROR NINGUN PARAMETRO COICIDE: " + parametros[i].nombre)
-					return -1
+					return "Parametro no reconocido"
 				}
 
 			}
@@ -780,26 +771,20 @@ func Reconocer_Rmgrp(lista_comando string, comando_aux string) int {
 		/*__________________________ CREAR RMGRP ______________________*/
 
 		if hay_name {
-			if Eliminar_Grupo(name, actualSesion.Path) == 0 {
-				//fmt.Println("LOGIN EJECUTADA EXITOSAMENTE")
-				return 0
-			} else {
-				fmt.Println("ERROR USUARIO NO SE PUDO ELIMINAR")
-				return -1
-			}
+			return Eliminar_Grupo(name, actualSesion.Path)
 		} else {
 			fmt.Println("ERROR NO HAY NAME EN RMGRP")
-			return -1
+			return "Parametro NAME requerido"
 		}
 	}
 
-	return -1
+	return "COMANDO NO RECONOCIDO"
 }
 
 /*__________________________________ FIN DE RMGRP _____________________________________*/
 
 /*__________________________________  INICIO DE MKUSR ___________________________________*/
-func Reconocer_Mkusr(lista_comando string, comando_aux string) int {
+func Reconocer_Mkusr(lista_comando string, comando_aux string) string {
 	var usuario string = ""
 	var pass_word = ""
 	var grupo_incluir = ""
@@ -807,7 +792,7 @@ func Reconocer_Mkusr(lista_comando string, comando_aux string) int {
 	var hay_pass bool = false
 	var hay_grupo bool = false
 
-	if "mkusr" == strings.ToLower(comando_aux) {
+	if "mkuser" == strings.ToLower(comando_aux) {
 		parametros := Reconocer_parametros(lista_comando, comando_aux)
 		for i := 0; i < len(parametros); i++ {
 
@@ -819,7 +804,7 @@ func Reconocer_Mkusr(lista_comando string, comando_aux string) int {
 
 					if usuario == "" {
 						fmt.Println("ERROR USUARIO SIN VALOR EN PARAMETRO MKUSR")
-						return -1
+						return "Valor del parametro USER incorrecto"
 					}
 					hay_usuario = true
 
@@ -829,7 +814,7 @@ func Reconocer_Mkusr(lista_comando string, comando_aux string) int {
 
 					if pass_word == "" {
 						fmt.Println("ERROR PWD SIN VALOR EN PARAMETRO EN MKUSR")
-						return -1
+						return "Valor del parametro PWD incorrecto"
 					}
 					hay_pass = true
 
@@ -839,13 +824,13 @@ func Reconocer_Mkusr(lista_comando string, comando_aux string) int {
 
 					if grupo_incluir == "" {
 						fmt.Println("ERROR GRUPO SIN VALOR EN PARAMETRO MKUSR")
-						return -1
+						return "Valor del parametro GRP incorrecto"
 					}
 					hay_grupo = true
 
 				} else {
 					fmt.Println("ERROR NINGUN PARAMETRO COICIDE: "+parametros[i].nombre, "EN MKUSER")
-					return -1
+					return "Parametro no reconocido"
 				}
 
 			}
@@ -856,26 +841,25 @@ func Reconocer_Mkusr(lista_comando string, comando_aux string) int {
 
 		if !hay_usuario {
 			fmt.Println("ERROR NO HAY USUARIO EN MKUSR")
-			return -1
+			return "Parametro USER requerido"
 		}
 		if !hay_pass {
 			fmt.Println("ERROR NO HAY PASS EN MKUSR")
-			return -1
+			return "Parametro PWD requerido"
 		}
 		if !hay_grupo {
 			fmt.Println("ERROR NO HAY GRUPO EN MKUSR")
-			return -1
+			return "Parametro GRP requerido"
 		}
 		if actualSesion.Id_user == 1 && actualSesion.Id_grp == 1 {
-			if Crear_Mkusr(usuario, pass_word, grupo_incluir) == 0 {
-				fmt.Println("USUARIO CREADO CORRENTAMENTE")
-				return 0
-			}
+			return Crear_Mkusr(usuario, pass_word, grupo_incluir)
+		} else {
+			return "MKUSER solo puede ser ejecutato por el usuario root"
 		}
 
 	}
 
-	return -1
+	return "COMANDO NO RECONOCIDO"
 }
 
 /*__________________________________  FIN DE MKUSR ______________________________________*/

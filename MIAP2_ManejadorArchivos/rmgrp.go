@@ -6,13 +6,18 @@ import (
 	"strconv"
 )
 
-func Eliminar_Grupo(name string, path string) int32 {
+func Eliminar_Grupo(name string, path string) string {
+
+	if actualSesion.Id_user != 1 || actualSesion.Id_grp != 1 {
+		return "RMGRP solo puede ser ejecutato por el usuario root"
+	}
+
 	file, err := os.OpenFile(path, os.O_RDWR, 0777)
 	defer file.Close()
 
 	if err != nil {
 		//log.Fatal("ERROR AL ABRIR ARCHIVO,ARCHIVO NO EXISTE", err)
-		return -1
+		return "Error al abrir el archivo"
 	}
 	var super SUPER_BLOQUE
 	var inodo TABLA_INODOS
@@ -79,7 +84,7 @@ func Eliminar_Grupo(name string, path string) int32 {
 				}
 			}
 			if flag {
-				return 0
+				return "GRUPO REMOVIDO EXITOSAMENTE"
 				//break
 
 			}
@@ -87,5 +92,5 @@ func Eliminar_Grupo(name string, path string) int32 {
 		}
 	}
 
-	return -1
+	return "OCURRIO UN ERROR AL TRATAR DE REMOVER EL GRUPO"
 }

@@ -6,9 +6,8 @@ import (
 	"strconv"
 )
 
-func Crear_Mkgrp(name string) int32 {
+func Crear_Mkgrp(name string) string {
 	if actualSesion.hay_Sesion {
-
 		if actualSesion.Id_user == 1 && actualSesion.Id_grp == 1 { //Usuario root
 			if len(name) <= 10 {
 				//grupo, id_grupo := Existe_Grupo(name, actualSesion.Path)
@@ -18,24 +17,24 @@ func Crear_Mkgrp(name string) int32 {
 					var nuevo_Grupo string = strconv.Itoa(int(id_grupo)) + ",G," + name + "\n"
 					agregarUsersTXT1(nuevo_Grupo, actualSesion.Path)
 					fmt.Println("GRUPO CREADO CON EXITO")
-					return 0
+					return "GRUPO CREADO EXITOSAMENTE"
 				} else {
 					fmt.Println("ERROR EXISTE GRUPO CON NOMBRE IGUAL")
-					return -1
+					return "El nombre de grupo ya existe"
 				}
 
 			} else {
 				fmt.Println("ERROR NOMBRE EXECEDE 10 CARACTERES")
-				return -1
+				return "Parametro NAME debe tener maximo 10 carateres"
 			}
 		} else {
 			fmt.Println("ERROR SOLO ROOT EJECUTA COMANDO MKGRP")
-			return -1
+			return "MKGRP solo puede ser ejecutato por el usuario root"
 		}
 
 	} else {
 		fmt.Println("ERROR DEBE EXISTIR SESION PARA CREAR GRUPO")
-		return -1
+		return "Inicie sesion para continuar"
 	}
 	//return 0
 
