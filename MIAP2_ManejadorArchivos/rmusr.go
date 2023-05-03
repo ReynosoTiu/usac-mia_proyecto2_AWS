@@ -5,23 +5,24 @@ import (
 	"strconv"
 )
 
-func Eliminar_Usurio(name string, path_disco string) int {
+func Eliminar_Usurio(name string, path_disco string) string {
 	if actualSesion.Id_user == 1 && actualSesion.Id_grp == 1 {
 		if buscarUsuario(name) {
-			eliminarUsuario(name)
-			return 0
+			return eliminarUsuario(name)
+		} else {
+			return "No se encuentra el usuario"
 		}
 	}
 
-	return -1
+	return "RMUSR solo puede ser ejecutato por el usuario root"
 }
 
-func eliminarUsuario(name string) {
+func eliminarUsuario(name string) string {
 	fp, err := os.OpenFile(actualSesion.Path, os.O_RDWR, 0777)
 	defer fp.Close()
 
 	if err != nil {
-
+		return "Error al abrir el disco"
 	}
 
 	var super SUPER_BLOQUE
@@ -92,11 +93,10 @@ func eliminarUsuario(name string) {
 				}
 			}
 			if flag {
-				//return 0
-				break
+				return "USUARIO ELIMINADO EXITOSAMENTE"
 			}
 
 		}
 	}
-
+	return "No se pudo eliminar el usuario"
 }

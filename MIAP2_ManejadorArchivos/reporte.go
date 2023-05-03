@@ -306,6 +306,7 @@ func crear_rep_tree(direccion_disco string, destino_reporte_dot string, destino_
 	contenidoDot = contenidoDot + "    rankdir=\"LR\" \n"
 	//Creamos los inodos
 	for aux < super.S_bm_block_start {
+		fmt.Println("Dentro de for AUX tree")
 		//fmt.Println("INicio de super bloque:",supe)
 
 		fp.Seek(int64(super.S_bm_inode_start+i), 0)
@@ -378,6 +379,7 @@ func crear_rep_tree(direccion_disco string, destino_reporte_dot string, destino_
 	}
 
 	contenidoDot = contenidoDot + "\n\n}"
+	fmt.Println(contenidoDot)
 	crear_archivo_reporte(destino_reporte_dot, contenidoDot)
 	contenidoDot = ""
 

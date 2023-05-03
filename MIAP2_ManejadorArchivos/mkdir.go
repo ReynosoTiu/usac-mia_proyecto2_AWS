@@ -8,19 +8,22 @@ import (
 	"strings"
 )
 
-func Crear_Mkdir(path_crear string, hay_p bool) int {
+func Crear_Mkdir(path_crear string, hay_p bool) string {
 	var result int = crearCarpeta(path_crear, hay_p)
 	if result == 0 {
 		fmt.Println("ERROR LA CARPETA YA EXISTE")
+		return "La carpeta ya existe"
 	} else if result == 1 {
 		fmt.Println("CARPETA CREADA CON EXITO")
-		return 0
+		return "CARPETA CREADA CON EXITO"
 	} else if result == 2 {
 		fmt.Println("ERROR NO TIENE PERMISO DE ESCRITURA PAR CREAR CARPETA")
+		return "No tiene permisos de escritura"
 	} else if result == 3 {
 		fmt.Println("ERROR: NO EXISTE EL DIRECTORIO Y  NO ESTA EL PARAMETRO -P")
+		return "No existe el directorio, sug (>r)"
 	}
-	return -1
+	return "Ha ocurrido un problema al crear la carpeta"
 }
 
 func crearCarpeta(path string, p bool) int {

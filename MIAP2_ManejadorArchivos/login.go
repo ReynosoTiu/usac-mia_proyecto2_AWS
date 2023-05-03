@@ -11,6 +11,7 @@ import (
 )
 
 func Log_in(path string, id string, usuario string, password string) string {
+	fmt.Println("ID IDdd", id)
 	var aux_nodo *NODO = listaS.obtenerNodo(id)
 	if aux_nodo != nil {
 		index, inicio, tamano, es_logica, fit_ := Buscar_Indice_P_E_L(aux_nodo.Path, aux_nodo.Name) //returna 4 variables
@@ -57,6 +58,8 @@ func Log_in(path string, id string, usuario string, password string) string {
 					copy(actualSesion.Fit[:], string(fit_)) //aqui arreglar a ver que pex
 					actualSesion.hay_Sesion = existeUsuario
 					return "INICIO DE SESION EXITOSO"
+				} else {
+					return "Datos incorrectos"
 				}
 			} else {
 				fmt.Println("ERROR DEBES CERRAR SESION PARA INICIAR OTRA SESION")

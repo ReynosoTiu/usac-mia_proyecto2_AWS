@@ -7,21 +7,22 @@ import (
 	"path/filepath"
 )
 
-func Crear_Mkfile(path string, size_archivo int, cont_archivo string, hay_r bool) int {
+func Crear_Mkfile(path string, size_archivo int, cont_archivo string, hay_r bool) string {
 	var result int = crearArchivo(path, size_archivo, cont_archivo, hay_r)
 	if result == 1 {
 		fmt.Println("ARCHIVO CREADA CORRECTAMENTE")
-		return 0
+		return "ARCHIVO CREADO EXITOSAMENTE"
 	} else if result == 2 {
 		fmt.Println("ERROR USUARIO NO TIEME PERMISO PARA ESCRITURA")
+		return "Usuario no tiene permisos de escritura"
 	} else if result == 3 {
 		fmt.Println("ERROR EL ARCHIVO CONTENIDO NO EXISTE")
-		return 0
+		return "Archivo contenido no existe"
 	} else if result == 4 {
-		fmt.Println("ERROR NO EXISTE LA DIRECCION Y NO TIENE PARAMETRO -R")
-		return 0
+		fmt.Println("ERROR NO EXISTE LA DIRECCION Y NO TIENE PARAMETRO >R")
+		return "No existe la ruta, sug (>R)"
 	}
-	return -1
+	return "Hubo un error al chear el archivo"
 }
 
 func crearArchivo(path string, size int, cont string, p bool) int {

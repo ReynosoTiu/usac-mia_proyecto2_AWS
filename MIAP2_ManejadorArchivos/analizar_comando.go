@@ -1,9 +1,7 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -127,7 +125,7 @@ func Reconocer_parametros(texto_parametros string, nombre_comando string) []Para
 					}
 
 				}
-				if strings.ToLower(param) == "-r" {
+				if strings.ToLower(param) == ">r" {
 					if i < len(texto_parametros)-1 {
 						if texto_parametros[i+1] == 32 {
 							parametros[indice].nombre = param
@@ -195,15 +193,12 @@ func Reconocer_Comando(texto_comando string) string {
 			return Reconocer_Rmgrp(texto_comando, ins_aux)
 		case "mkuser":
 			return Reconocer_Mkusr(texto_comando, ins_aux)
-		case "rmuser":
-			Reconocer_Rmusr(texto_comando, ins_aux)
-			break
+		case "rmusr":
+			return Reconocer_Rmusr(texto_comando, ins_aux)
 		case "mkdir":
-			Reconocer_Mkdir(texto_comando, ins_aux)
-			break
+			return Reconocer_Mkdir(texto_comando, ins_aux)
 		case "mkfile":
-			Reconocer_Mkfile(texto_comando, ins_aux)
-			break
+			return Reconocer_Mkfile(texto_comando, ins_aux)
 		case "comentario":
 			break
 		case "exec":
@@ -218,16 +213,14 @@ func Reconocer_Comando(texto_comando string) string {
 			break
 
 		case "rep":
-			Reconocer_Rep(texto_comando, ins_aux)
-			break
+			return Reconocer_Rep(texto_comando, ins_aux)
 		case "pause":
-			reader := bufio.NewReader(os.Stdin)
-			texto, _ := reader.ReadString('\n')
-			_ = texto
-
-			break
+			//reader := bufio.NewReader(os.Stdin)
+			//texto, _ := reader.ReadString('\n')
+			//_ = texto
+			return "PAUSE"
 		default:
-			return "COMANDO NO RECONOCIDO"
+			return "COMANDO NO RECONOCIDO0"
 		}
 
 	} else {
@@ -671,7 +664,7 @@ func Reconocer_Login(lista_comando string, comando_aux string) string {
 						return Log_in(aux_nodo.Path, id, user, password)
 					} else {
 						fmt.Println("ERROR ID NO SE ENCOTRO EN LOGIN: ", id)
-						return "No se encuentra la particion con el id ingresado"
+						return "No se encuentra la particion con el ID ingresado"
 					}
 
 				} else {
@@ -830,7 +823,7 @@ func Reconocer_Mkusr(lista_comando string, comando_aux string) string {
 
 				} else {
 					fmt.Println("ERROR NINGUN PARAMETRO COICIDE: "+parametros[i].nombre, "EN MKUSER")
-					return "Parametro no reconocido"
+					return "Parametro no reconocido " + parametros[i].nombre
 				}
 
 			}
@@ -865,7 +858,7 @@ func Reconocer_Mkusr(lista_comando string, comando_aux string) string {
 /*__________________________________  FIN DE MKUSR ______________________________________*/
 
 /*__________________________________ INICO DE RMUSR ____________________________________*/
-func Reconocer_Rmusr(lista_comando string, comando_aux string) int {
+func Reconocer_Rmusr(lista_comando string, comando_aux string) string {
 	var name string = ""
 	var hay_name bool = false
 
@@ -880,13 +873,13 @@ func Reconocer_Rmusr(lista_comando string, comando_aux string) int {
 
 					if name == "" {
 						fmt.Println("ERROR NAME SIN VALOR EN PARAMETRO")
-						return -1
+						return "Valor del parametro NAME incorrecto"
 					}
 					hay_name = true
 
 				} else {
 					fmt.Println("ERROR NINGUN PARAMETRO COICIDE: " + parametros[i].nombre)
-					return -1
+					return "Parametro no reconocido"
 				}
 
 			}
@@ -896,26 +889,20 @@ func Reconocer_Rmusr(lista_comando string, comando_aux string) int {
 		/*__________________________ CREAR RMGRP ______________________*/
 
 		if hay_name {
-			if Eliminar_Usurio(name, actualSesion.Path) == 0 {
-				fmt.Println("USUARIO ELIMINADO CORRECTAMENTE")
-				return 0
-			} else {
-				fmt.Println("ERROR USUARIO NO SE PUDO ELIMINAR")
-				return -1
-			}
+			return Eliminar_Usurio(name, actualSesion.Path)
 		} else {
 			fmt.Println("ERROR NO HAY NAME EN RMGRP")
-			return -1
+			return "Parametro NAME requerido"
 		}
 	}
 
-	return -1
+	return "COMANDO NO RECONOCIDO1"
 }
 
 /*__________________________________ FIN DE RMUSR _______________________________________*/
 
 /*__________________________________  INICIO DE MKDIR___________________________________*/
-func Reconocer_Mkdir(lista_comando string, comando_aux string) int {
+func Reconocer_Mkdir(lista_comando string, comando_aux string) string {
 	var path_crear string = ""
 	var hay_path_crear bool = false
 	var hay_p bool = false
@@ -923,7 +910,6 @@ func Reconocer_Mkdir(lista_comando string, comando_aux string) int {
 	if "mkdir" == strings.ToLower(comando_aux) {
 		parametros := Reconocer_parametros(lista_comando, comando_aux)
 		for i := 0; i < len(parametros); i++ {
-
 			if parametros[i].valor != "" && parametros[i].nombre != "" || parametros[i].valor == "" && parametros[i].nombre != "" {
 
 				if ">path=" == strings.ToLower(parametros[i].nombre) {
@@ -932,20 +918,20 @@ func Reconocer_Mkdir(lista_comando string, comando_aux string) int {
 
 					if path_crear == "" {
 						fmt.Println("ERROR PATH SIN VALOR EN PARAMETRO MKDIR")
-						return -1
+						return "Valor del parametro PATH incorrecto"
 					}
 					hay_path_crear = true
 
 				} else if ">r" == strings.ToLower(parametros[i].nombre) {
 					if hay_p {
 						fmt.Println("ERROR R SE REPITE EN PARAMETRO EN MKDIR")
-						return -1
+						//RETURN
 					}
 					hay_p = true
 
 				} else {
 					fmt.Println("ERROR NINGUN PARAMETRO COICIDE: "+parametros[i].nombre, "EN MKDIR")
-					return -1
+					return "No se reconoce el parametro"
 				}
 
 			}
@@ -956,24 +942,19 @@ func Reconocer_Mkdir(lista_comando string, comando_aux string) int {
 
 		if !hay_path_crear {
 			fmt.Println("ERROR NO HAY PATH EN MKDIR")
-			return -1
+			return "Parametro PATH requerido"
 		}
-		if actualSesion.Id_user == 1 && actualSesion.Id_grp == 1 {
-			if Crear_Mkdir(path_crear, hay_p) == 0 {
-				//fmt.Println("CARPETAS CREADA CORRENTAMENTE")
-				return 0
-			}
-		}
+		return Crear_Mkdir(path_crear, hay_p)
 
 	}
 
-	return -1
+	return "COMANDO NO RECONOCIDO1"
 }
 
 /*___________________________________ FIN DE MKDIR _____________________________*/
 
 /*____________________________________ INICIO DE MKFILE _________________________*/
-func Reconocer_Mkfile(lista_comando string, comando_aux string) int {
+func Reconocer_Mkfile(lista_comando string, comando_aux string) string {
 	var path_crear_archivo string = ""
 	var hay_path_crear bool = false
 	var size_archivo int = 0
@@ -993,15 +974,11 @@ func Reconocer_Mkfile(lista_comando string, comando_aux string) int {
 
 					if path_crear_archivo == "" {
 						fmt.Println("ERROR PATH SIN VALOR EN PARAMETRO MKFILE")
-						return -1
+						return "Valor del parametro PATH incorrecto"
 					}
 					hay_path_crear = true
 
 				} else if ">r" == strings.ToLower(parametros[i].nombre) {
-					if hay_r {
-						fmt.Println("ERROR R SE REPITE EN PARAMETRO EN MKFILE")
-						return -1
-					}
 					hay_r = true
 
 				} else if ">size=" == strings.ToLower(parametros[i].nombre) {
@@ -1011,7 +988,7 @@ func Reconocer_Mkfile(lista_comando string, comando_aux string) int {
 
 					} else {
 						fmt.Println("ERROR SIZE  EN PARAMETRO EN MKFILE")
-						return -1
+						return "Valor del parametro SIZE incorrecto"
 					}
 
 				} else if ">cont=" == strings.ToLower(parametros[i].nombre) {
@@ -1019,12 +996,12 @@ func Reconocer_Mkfile(lista_comando string, comando_aux string) int {
 
 					if cont_archivo == "" {
 						fmt.Println("ERROR CONT SIN VALOR EN PARAMETRO MKFILE")
-						return -1
+						return "Valor del parametro COUNT incorrecto"
 					}
 
 				} else {
 					fmt.Println("ERROR NINGUN PARAMETRO COICIDE: "+parametros[i].nombre, "EN MKFILE")
-					return -1
+					return "No se reconoce el parametro"
 				}
 
 			}
@@ -1034,24 +1011,21 @@ func Reconocer_Mkfile(lista_comando string, comando_aux string) int {
 		/*__________________________ CREAR MKDIR ______________________*/
 		if !hay_path_crear {
 			fmt.Println("ERROR NO HAY PATH EN MKFILE")
-			return -1
+			return "Parametro PATH requerido"
 		}
 		if actualSesion.Id_user == 1 && actualSesion.Id_grp == 1 {
-			if Crear_Mkfile(path_crear_archivo, size_archivo, cont_archivo, hay_r) == 0 {
-				//fmt.Println("CARPETAS CREADA CORRENTAMENTE")
-				return 0
-			}
+			return Crear_Mkfile(path_crear_archivo, size_archivo, cont_archivo, hay_r)
 		}
 
 	}
 
-	return -1
+	return "NO SE RECONOCE EL COMANDO1"
 }
 
 /*____________________________________ FIN DE MKFILE ____________________________*/
 
 /*__________________________________ INICIO REPORTE _____________________________________*/
-func Reconocer_Rep(lista_param string, comando_aux string) int {
+func Reconocer_Rep(lista_param string, comando_aux string) string {
 	var name string = ""
 	var id string = ""
 	var path string = ""
@@ -1073,7 +1047,7 @@ func Reconocer_Rep(lista_param string, comando_aux string) int {
 
 					if name == "" {
 						fmt.Println("ERROR NAME SIN VALOR EN PARAMETRO REPORTE")
-						return -1
+						return "Valor del parametro NAME incorrecto"
 					}
 					hay_name = true
 
@@ -1087,7 +1061,7 @@ func Reconocer_Rep(lista_param string, comando_aux string) int {
 
 					if path == "" {
 						fmt.Println("ERROR ID SIN VALOR EN PARAMETRO REPORTE")
-						return -1
+						return "Valor del parametro PATH incorrecto"
 					}
 					hay_path = true
 				} else if ">id=" == strings.ToLower(parametros[i].nombre) {
@@ -1096,7 +1070,7 @@ func Reconocer_Rep(lista_param string, comando_aux string) int {
 
 					if id == "" {
 						fmt.Println("ERROR ID SIN VALOR EN PARAMETRO REPORTE")
-						return -1
+						return "Valor del parametro ID incorrecto"
 					}
 					hay_id = true
 
@@ -1105,12 +1079,12 @@ func Reconocer_Rep(lista_param string, comando_aux string) int {
 
 					if ruta == "" {
 						fmt.Println("ERROR RUTA SIN VALOR EN PARAMETRO REPORTE")
-						return -1
+						return "Valor del parametro RUTA incorrecto"
 					}
 					//hay_id = true
 				} else {
 					fmt.Println("ERROR NINGUN PARAMETRO COICIDE: " + parametros[i].nombre)
-					return -1
+					return "No se reconoce el parametro"
 				}
 
 			}
@@ -1129,48 +1103,55 @@ func Reconocer_Rep(lista_param string, comando_aux string) int {
 								fmt.Println("REPORTE MBR CREADO EXITOSAMENTE EN REP")
 							} else {
 								fmt.Println("ERROR NO SE PUDO CREAR REPORTE MBR EN REP")
+								return "No se pudo crear el reporte MBR"
 							}
 						} else if name == "disk" {
 							if crear_rep_disk(nodito.Path, path, path_reporte, extension_rep) == 0 {
 								fmt.Println("REPORTE DISK CREADO EXITOSAMENTE EN REP")
 							} else {
 								fmt.Println("ERROR NO SE PUDO CREAR REPORTE DISK EN REP")
+								return "No se pudo crear el reporte REP"
 							}
 						} else if name == "tree" {
 							if crear_rep_tree(nodito.Path, path, path_reporte, extension_rep) == 0 {
 								fmt.Println("REPORTE TREE CREADO EXITOSAMENTE EN REP")
 							} else {
 								fmt.Println("ERROR NO SE PUDO CREAR REPORTE TREE EN REP")
+								return "No se pudo crear el reporte TREE"
 							}
 						} else if name == "sb" {
 							if crear_rep_super_bloque(nodito.Path, path, path_reporte, extension_rep) == 0 {
 								fmt.Println("REPORTE SB CREADO EXITOSAMENTE EN REP")
 							} else {
 								fmt.Println("ERROR NO SE PUDO CREAR REPORTE SB EN REP")
+								return "No se pudo crear el reporte SUPERBLOQUE"
 							}
 						} else if name == "file" {
 							if crear_rep_file(nodito.Path, path, path_reporte, extension_rep, ruta) == 0 {
 								fmt.Println("REPORTE FILE CREADO EXITOSAMENTE EN REP")
 							} else {
 								fmt.Println("ERROR NO SE PUDO CREAR REPORTE FILE EN REP")
+								return "No se pudo crear el reporte FILE"
 							}
 						}
-
+						return "REPORTE CREADO EXITOSAMENTE"
 					} else {
 						fmt.Println("ERROR DISCO NO MONTADO PARA CREAR REPORTE")
+						return "La particion indicada no se encuentra montada"
 					}
 
 				} else {
 					fmt.Println("ERROR NO HAY ID EN REPORTE")
+					return "Parametro ID requerido"
 				}
 			} else {
 				fmt.Println("ERROR NO HAY PATH EN REPORTE")
+				return "Parametro PATH requerido"
 			}
 		} else {
 			fmt.Println("ERROR NO HAY  NAME REPORTE")
+			return "Parametro NAME requerido"
 		}
-
-		return 0
 	}
-	return -1
+	return "NO SE RECONOCE EL COMANDO1"
 } /*______________________ FIN DE REPORTE _____________________*/
