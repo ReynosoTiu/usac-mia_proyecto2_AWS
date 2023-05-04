@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -7,14 +8,11 @@ export class HeaderService {
 
   constructor() { }
 
-  login = false;
+  private enviarLogin = new Subject<boolean>();
+  obtenerLogin = this.enviarLogin.asObservable();
 
-  cambiarLogin(valor: boolean){
-    this.login = valor;
-  }
-
-  getLogin(){
-    return this.login;
+  enviarValorLogin(value: boolean) {
+    this.enviarLogin.next(value);
   }
 
 }

@@ -6,14 +6,13 @@
         </div>
         <div class="grupoBotones">
             <div class="btn-group mt-1" role="group">
-                <button [disabled]="!getLogin()" (click)="cambiar()" type="button"
+                <button [disabled]="!disableBtn" (click)="cambiar()" type="button"
                     class="btn btn-sm btn-info toogleButton">Comando</button>
-                <button [disabled]="getLogin()" (click)="cambiar()" type="button"
+                <button [disabled]="disableBtn" (click)="cambiar()" type="button"
                     class="btn btn-sm btn-info toogleButton">Login</button>
             </div>
         </div>
     </div>
-    
     <router-outlet></router-outlet>
 </div>
 </div>

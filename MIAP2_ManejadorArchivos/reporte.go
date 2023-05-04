@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/base64"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"math"
 	"os"
@@ -91,7 +93,6 @@ func crear_rep_mbr(direccion_disco string, destino_reporte_dot string, destino_r
 			contenidoDot += ">];\n"
 		}
 		contenidoDot += "}\n"
-		contenidoDotFinal := fmt.Sprintf("%s", contenidoDot)
 		crear_archivo_reporte(destino_reporte_dot, contenidoDot)
 		contenidoDot = ""
 		//var comando string = "dot -T" + extension + " " + destino_reporte_dot + " -o " + destino_reporte_grafico
@@ -102,10 +103,12 @@ func crear_rep_mbr(direccion_disco string, destino_reporte_dot string, destino_r
 
 		res := systema_comando(destino_reporte_dot, destino_reporte_grafico, extension)
 		if res == 0 {
+			data := getReporteBase64(destino_reporte_grafico)
 			return Respuesta{
-				Tipo:    0,
-				Mensaje: "",
-				Data:    contenidoDotFinal,
+				Tipo:      0,
+				Mensaje:   "",
+				Data:      data,
+				Extension: extension,
 			}
 		}
 
@@ -275,7 +278,6 @@ func crear_rep_disk(direccion_disco string, destino_reporte_dot string, destino_
 						} //fin de while
 						contenidoDot = contenidoDot + "\n\t\t</TR>\n\t</TABLE>\n</TD>"
 					}
-
 				}
 
 			} //fin de for
@@ -289,16 +291,18 @@ func crear_rep_disk(direccion_disco string, destino_reporte_dot string, destino_
 			//____________________________________________________________ FIN PARA ESPACION FINAL EN DISCO
 
 			contenidoDot += "\n\t</TR>\n\t</TABLE>\n\t>];}"
-			contenidoDotFinal := fmt.Sprintf("%s", contenidoDot)
 			crear_archivo_reporte(destino_reporte_dot, contenidoDot)
 			contenidoDot = ""
 
 			res := systema_comando(destino_reporte_dot, destino_reporte_grafico, extension)
+
 			if res == 0 {
+				data := getReporteBase64(destino_reporte_grafico)
 				return Respuesta{
-					Tipo:    0,
-					Mensaje: "",
-					Data:    contenidoDotFinal,
+					Tipo:      0,
+					Mensaje:   "",
+					Data:      data,
+					Extension: extension,
 				}
 			}
 
@@ -367,7 +371,7 @@ func crear_rep_tree(direccion_disco string, destino_reporte_dot string, destino_
 		if buffer == '1' {
 			fp.Seek(int64(super.S_inode_start+tamanoInodo*i), 0)
 			inodo = Leer_TablaInodo(fp, tamanoInodo)
-			contenidoDot = contenidoDot + "    inodo_" + strconv.Itoa(int(i)) + "[ shape=plaintext fontname=\"Century Gothic\" label=<\n"
+			contenidoDot = contenidoDot + "    inodo_" + strconv.Itoa(int(i)) + "[ shape=plaintext  label=<\n"
 			contenidoDot = contenidoDot + "   <table bgcolor=\"royalblue\" border='0' >"
 			contenidoDot = contenidoDot + "    <tr> <td colspan='2'><b>Inode " + strconv.Itoa(int(i)) + "</b></td></tr>\n"
 			contenidoDot = contenidoDot + "    <tr> <td bgcolor=\"lightsteelblue\"> i_uid </td> <td bgcolor=\"white\">" + strconv.Itoa(int(inodo.I_uid)) + "</td>  </tr>\n"
@@ -394,7 +398,7 @@ func crear_rep_tree(direccion_disco string, destino_reporte_dot string, destino_
 					if buffer == '1' { //Bloque carpeta
 						fp.Seek(int64(super.S_block_start+tamanoCarpeta*inodo.I_block[j]), 0)
 						carpeta = Leer_BloqueCarpeta(fp, tamanoCarpeta)
-						contenidoDot = contenidoDot + "    bloque_" + strconv.Itoa(int(inodo.I_block[j])) + "[shape=plaintext fontname=\"Century Gothic\" label=< \n"
+						contenidoDot = contenidoDot + "    bloque_" + strconv.Itoa(int(inodo.I_block[j])) + "[shape=plaintext  label=< \n"
 						contenidoDot = contenidoDot + "   <table bgcolor=\"seagreen\" border='0'>\n"
 						contenidoDot = contenidoDot + "    <tr> <td colspan='2'><b>Bloque Carpeta " + strconv.Itoa(int(inodo.I_block[j])) + "</b></td></tr>\n"
 						contenidoDot = contenidoDot + "    <tr> <td bgcolor=\"mediumseagreen\"> b_name </td> <td bgcolor=\"mediumseagreen\"> b_inode </td></tr>\n"
@@ -415,7 +419,7 @@ func crear_rep_tree(direccion_disco string, destino_reporte_dot string, destino_
 					} else if buffer == '2' { //Bloque archivo
 						fp.Seek(int64(super.S_block_start+tamanoArchivo*inodo.I_block[j]), 0)
 						archivo = Leer_BloqueArchivo(fp, tamanoArchivo)
-						contenidoDot = contenidoDot + "    bloque_" + strconv.Itoa(int(inodo.I_block[j])) + "[shape=plaintext fontname=\"Century Gothic\" label=< \n"
+						contenidoDot = contenidoDot + "    bloque_" + strconv.Itoa(int(inodo.I_block[j])) + "[shape=plaintext  label=< \n"
 						contenidoDot = contenidoDot + "   <table border='0' bgcolor=\"sandybrown\">\n"
 						contenidoDot = contenidoDot + "    <tr> <td> <b>Bloque Archivo " + strconv.Itoa(int(inodo.I_block[j])) + "</b></td></tr>\n"
 						contenidoDot = contenidoDot + "    <tr> <td bgcolor=\"white\"> " + aString(archivo.B_content[:]) + "</td></tr>\n"
@@ -430,16 +434,17 @@ func crear_rep_tree(direccion_disco string, destino_reporte_dot string, destino_
 	}
 
 	contenidoDot = contenidoDot + "\n\n}"
-	contenidoDotFinal := fmt.Sprintf("%s", contenidoDot)
 	crear_archivo_reporte(destino_reporte_dot, contenidoDot)
 	contenidoDot = ""
 
 	res := systema_comando(destino_reporte_dot, destino_reporte_grafico, extension)
 	if res == 0 {
+		data := getReporteBase64(destino_reporte_grafico)
 		return Respuesta{
-			Tipo:    0,
-			Mensaje: "",
-			Data:    contenidoDotFinal,
+			Tipo:      0,
+			Mensaje:   "",
+			Data:      data,
+			Extension: extension,
 		}
 	}
 
@@ -480,7 +485,7 @@ func crear_rep_super_bloque(direccion_disco string, destino_reporte_dot string, 
 	super = Leer_SuperBloque(fp, tamanoSuper)
 
 	contenidoDot = contenidoDot + "digraph G{\n"
-	contenidoDot = contenidoDot + "    nodo [shape=none, fontname=\"Century Gothic\" label=<"
+	contenidoDot = contenidoDot + "    nodo [shape=none,  label=<"
 	contenidoDot = contenidoDot + "   <table border='0' cellborder='1' cellspacing='0' bgcolor=\"cornflowerblue\">"
 	contenidoDot = contenidoDot + "    <tr> <td COLSPAN='2'> <b>SUPER_BLOQUE</b> </td></tr>\n"
 	contenidoDot = contenidoDot + "    <tr> <td bgcolor=\"lightsteelblue\"> s_inodes_count </td> <td bgcolor=\"white\"> " + strconv.Itoa(int(super.S_inodes_count)) + "</td> </tr>\n"
@@ -503,15 +508,16 @@ func crear_rep_super_bloque(direccion_disco string, destino_reporte_dot string, 
 	contenidoDot = contenidoDot + "   </table>>]\n"
 	contenidoDot = contenidoDot + "\n}"
 
-	contenidoDotFinal := fmt.Sprintf("%s", contenidoDot)
 	crear_archivo_reporte(destino_reporte_dot, contenidoDot)
 	contenidoDot = ""
 	res := systema_comando(destino_reporte_dot, destino_reporte_grafico, extension)
 	if res == 0 {
+		data := getReporteBase64(destino_reporte_grafico)
 		return Respuesta{
-			Tipo:    0,
-			Mensaje: "",
-			Data:    contenidoDotFinal,
+			Tipo:      0,
+			Mensaje:   "",
+			Data:      data,
+			Extension: extension,
 		}
 	}
 
@@ -560,7 +566,7 @@ func crear_rep_file(direccion_disco string, destino_reporte_dot string, destino_
 
 	//FILE *graph = fopen("grafica.dot","w");
 	contenidoDot = contenidoDot + "digraph G{\n"
-	contenidoDot = contenidoDot + "    nodo [shape=none, fontname=\"Century Gothic\" label=<"
+	contenidoDot = contenidoDot + "    nodo [shape=none,  label=<"
 	contenidoDot = contenidoDot + "   <table border='0' cellborder='1' cellspacing='0' bgcolor=\"lightsteelblue\">"
 	contenidoDot = contenidoDot + "    <tr><td align=\"left\"> <b>" + name + "</b> </td></tr>\n"
 	contenidoDot = contenidoDot + "    <tr><td bgcolor=\"white\">"
@@ -577,15 +583,16 @@ func crear_rep_file(direccion_disco string, destino_reporte_dot string, destino_
 	contenidoDot = contenidoDot + "   </table>>]\n"
 	contenidoDot = contenidoDot + "\n}"
 	//cout << "Reporte file generado con exito " << endl;
-	contenidoDotFinal := fmt.Sprintf("%s", contenidoDot)
 	crear_archivo_reporte(destino_reporte_dot, contenidoDot)
 	contenidoDot = ""
 	res := systema_comando(destino_reporte_dot, destino_reporte_grafico, extension)
 	if res == 0 {
+		data := getReporteBase64(destino_reporte_grafico)
 		return Respuesta{
-			Tipo:    0,
-			Mensaje: "",
-			Data:    contenidoDotFinal,
+			Tipo:      0,
+			Mensaje:   "",
+			Data:      data,
+			Extension: extension,
 		}
 	}
 
@@ -595,4 +602,15 @@ func crear_rep_file(direccion_disco string, destino_reporte_dot string, destino_
 		Data:    "",
 	}
 
+}
+
+func getReporteBase64(destino_reporte_grafico string) string {
+	fmt.Println("Archivo lectura", destino_reporte_grafico)
+	file, err := ioutil.ReadFile(destino_reporte_grafico)
+	if err != nil {
+		fmt.Println("Error al leer el archivo:", err)
+		return ""
+	}
+	encoded := base64.StdEncoding.EncodeToString(file)
+	return encoded
 }

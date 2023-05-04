@@ -27,10 +27,11 @@ type inicioS struct {
 	Password string `json:"Password"`
 }
 type Respuesta struct {
-	Tipo    int32  `json:"Tipo"`
-	Mensaje string `json:"Mensaje"`
-	Data    string `json:"Data"`
-	Ruta    string `json:"Ruta"`
+	Tipo      int32  `json:"Tipo"`
+	Mensaje   string `json:"Mensaje"`
+	Data      string `json:"Data"`
+	Ruta      string `json:"Ruta"`
+	Extension string `json:"Extension"`
 }
 
 type logn []inicioS

@@ -10,40 +10,40 @@ import { HeaderService } from './services/app/header.service';
 })
 export class AppComponent {
   title = 'MIAP2_Interfaz';
-
   disableBtn = false;
-  constructor(private routes: Router,
-    private headerS: HeaderService) { }
 
-  ngOnInit(): void {
+  constructor(private routes: Router,
+    private headerS: HeaderService) {
   }
 
-  cambiar(){
-    this.disableBtn = !this.disableBtn;
-    this.headerS.cambiarLogin(this.disableBtn);
-    if(this.disableBtn){
+  ngOnInit(): void {
+    this.headerS.obtenerLogin.subscribe(res => {
+      this.disableBtn = res;
+    });
+  }
+
+  cambiar() {
+    let valor = !this.disableBtn;
+    if (valor) {
+      this.headerS.enviarValorLogin(true);
       this.routes.navigate(['login'])
-    }else{
+    } else {
+      this.headerS.enviarValorLogin(false);
       this.routes.navigate(['commandline'])
     }
   }
 
   textoArchivoLeido = '';
-  seleccionar(event: HtmlInputEvent){
+  seleccionar(event: HtmlInputEvent) {
     if (event.target.files && event.target.files[0]) {
       let file: File = <File>event.target.files[0];
-      if(file.name.split('.').pop() === 'eea'){
+      if (file.name.split('.').pop() === 'eea') {
         const reader = new FileReader();
         reader.onload = () => {
           this.textoArchivoLeido = String(reader.result);
         }
-      reader.readAsText(file);
+        reader.readAsText(file);
       }
     }
-  }
-
-  getLogin():boolean {
-    this.disableBtn = this.headerS.getLogin();
-    return this.disableBtn;
   }
 }

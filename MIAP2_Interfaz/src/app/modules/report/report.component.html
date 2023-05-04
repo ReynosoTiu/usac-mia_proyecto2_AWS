@@ -6,12 +6,12 @@
         <button (click)="cerrarSesion()" class="btn btn-primary btn-sm abrir"> Logout </button>
     </div>
 </div>
-<div class="list-group">
+<div *ngIf="!generado" class="list-group">
     <button *ngFor="let item of reportes" (click)="generar(item)" type="button"
         class="list-group-item list-group-item-action"> {{ item.Ruta }} </button>
 </div>
 <div>
-    <div class="row mt-4" *ngIf="generado">
+    <div *ngIf="generado" class="row mt-4">
         <div class="btnVerCompleto col">
             <div>
                 <button (click)="descargar()" class="btn btn-primary btn-sm descargar"> Descargar </button>
@@ -20,10 +20,13 @@
         </div>
         <div class="col-4">
             <div>
-                <button (click)="regresar()" class="btn btn-primary btn-sm"> <i class="fa-regular fa-turn-down-left"></i> Regresar </button>
+                <button (click)="regresar()" class="btn btn-primary btn-sm"> <i
+                        class="fa-regular fa-turn-down-left"></i> Regresar </button>
             </div>
         </div>
     </div>
-    <div #miDiv id="graph" class="visorGrafo" [ngClass]="{'visorGrafo': generado, 'visorGrafo2': !generado}">
+    <div *ngIf="generado" class="visorGrafo">
+        <img *ngIf="tipoArchivo=='imagen'" [src]="imageData" class="img64">
+        <iframe *ngIf="tipoArchivo=='pdf'" [src]="pdfUrl()" type="application/pdf" width="100%" height="100%"></iframe>
     </div>
 </div>

@@ -23,19 +23,22 @@ export class CommandlineComponent implements OnInit {
     private sweet: SweetalertService,
     private reporteS: ReportService,
     private headerS: HeaderService
-  ) { }
+  ) { 
+  }
 
   ngOnInit(): void {
     let item = localStorage.getItem("reportes");
     if(!item){
       localStorage.setItem("reportes", JSON.stringify([]));
     }
-    this.headerS.cambiarLogin(false);
   }
 
   ngAfterViewInit() {
     this.textAr2.nativeElement.value = '';
     this.textAr.nativeElement.value = '';
+    setTimeout(() => {
+      this.headerS.enviarValorLogin(false);
+    }, 100);
   }
 
   cambiar() {
@@ -83,6 +86,12 @@ export class CommandlineComponent implements OnInit {
           } else {
             await this.commandlineService.enviarContenidoEEA(c)
               .then(res => {
+                if(res.Mensaje == "SESION CERRADA EXITOSAMENTE"){
+                  localStorage.setItem("login", "false");
+                }
+                if(res.Mensaje == "INICIO DE SESION EXITOSO"){
+                  localStorage.setItem("login", "true");
+                }
                 if(res.Tipo == 2){
                   this.reporteS.guardarReporte(res);
                 }

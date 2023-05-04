@@ -2,11 +2,13 @@ export interface Respuesta {
     Tipo: number,
     Mensaje: string,
     Data: string,
-    Ruta: string
+    Ruta: string,
+    Extension: string
 }
 
 export interface Reporte {
     Ruta: string,
-    Grafo: string,
-    NombreSave: string
+    Data: string,
+    NombreSave: string,
+    Extension: string
 }

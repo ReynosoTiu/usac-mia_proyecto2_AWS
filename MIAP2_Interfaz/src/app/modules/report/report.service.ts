@@ -17,15 +17,18 @@ export class ReportService {
 
     let nombres = res.Ruta.split("/");
     let nuevoGrafo: Reporte = {
-      Grafo: res.Data,
+      Data: res.Data,
       Ruta: res.Ruta,
-      NombreSave: nombres[nombres.length - 1]
+      NombreSave: nombres[nombres.length - 1],
+      Extension: res.Extension
     }
+
+    console.log(nuevoGrafo);
 
     let encontrado = false;
     for (let item of grafos) {
       if (item.Ruta == nuevoGrafo.Ruta) {
-        item.Grafo = nuevoGrafo.Grafo;
+        item.Data = nuevoGrafo.Data;
         item.NombreSave = nuevoGrafo.NombreSave;
         encontrado = true;
         break;

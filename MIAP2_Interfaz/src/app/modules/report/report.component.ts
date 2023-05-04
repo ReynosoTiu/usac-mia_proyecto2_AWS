@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { graphviz } from 'd3-graphviz';
 import { Reporte } from 'src/app/models/servicios.model';
 import { saveAs } from 'file-saver'
 import { LoginService } from '../login/login.service';
 import { HeaderService } from 'src/app/services/app/header.service';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+
 @Component({
   selector: 'app-report',
   templateUrl: './report.component.html',
@@ -13,12 +14,14 @@ import { HeaderService } from 'src/app/services/app/header.service';
 export class ReportComponent implements OnInit {
 
   reportes: Reporte[] = [];
-  reporteActual:Reporte | undefined;
+  reporteActual: Reporte | undefined;
   generado = false;
 
   constructor(private route: Router,
     private loginS: LoginService,
-    private headerS: HeaderService) {
+    private headerS: HeaderService,
+    private sanitizer: DomSanitizer
+  ) {
     let grafosString = localStorage.getItem("reportes");
     if (grafosString) {
       this.reportes = JSON.parse(grafosString);
@@ -26,50 +29,76 @@ export class ReportComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.headerS.cambiarLogin(true);
     let login = localStorage.getItem("login");
     if (login != "true") {
       this.route.navigate(["login"]);
     }
   }
 
-  cerrarSesion(){
-    this.loginS.cerrarSesion(true).then();
-  }
-
-  generar(grafo: Reporte) {
-    this.reporteActual = grafo;
-    console.log(grafo.Grafo);
-    graphviz("#graph")
-      .dot(grafo.Grafo)
-      .render();
-
+  ngAfterViewInit() {
     setTimeout(() => {
-      let svg_all = document.getElementsByTagName("svg");
-      let svg = svg_all[0];
-      svg.setAttribute("width", "100%");
-      this.generado = true;
+      this.headerS.enviarValorLogin(true);
     }, 100);
   }
 
+  cerrarSesion() {
+    this.loginS.cerrarSesion(true).then();
+  }
+
+  imageData = "";
+  tipoArchivo = ""
+  extension = "";
+  generar(grafo: Reporte) {
+    this.reporteActual = grafo;
+    let extension = "data:image/png;base64,";
+    this.tipoArchivo = "imagen";
+    switch (grafo.Extension.toLowerCase()) {
+      case "jpg":
+        extension = "data:image/jpeg;base64,"
+        break;
+      case "pdf":
+        this.tipoArchivo = "pdf";
+        extension = "data:application/pdf;base64,"
+        break;
+    }
+    this.imageData = `${extension}${grafo.Data}`;
+    this.generado = true;
+  }
+
+  pdfUrl(): SafeResourceUrl {
+    const url = this.imageData;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+
   abrir() {
-    let svg_all = document.getElementsByTagName("svg");
-    let svg = svg_all[0];
-    const svgCode = new XMLSerializer().serializeToString(svg);
-    const blob = new Blob([svgCode], { type: 'image/svg+xml' });
-    var url = window.URL.createObjectURL(blob);
-    window.open(url);
+    let base64Image = this.imageData;
+    const byteString = atob(base64Image.split(',')[1]);
+    const mimeString = base64Image.split(',')[0].split(':')[1].split(';')[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([ab], { type: mimeString });
+    const blobUrl = URL.createObjectURL(blob);
+    window.open(blobUrl, '_blank');
   }
 
   descargar() {
-    let svg_all = document.getElementsByTagName("svg");
-    let svg = svg_all[0];
-    const svgCode = new XMLSerializer().serializeToString(svg);
-    const blob = new Blob([svgCode], { type: 'image/svg+xml' });
+    let base64Image = this.imageData;
+    const byteString = atob(base64Image.split(',')[1]);
+    const mimeString = base64Image.split(',')[0].split(':')[1].split(';')[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([ab], { type: mimeString });
+    console.log(this.reporteActual?.NombreSave);
     saveAs(blob, this.reporteActual?.NombreSave);
   }
 
-  regresar(){
+  regresar() {
     this.reporteActual = undefined;
     this.generado = false;
   }

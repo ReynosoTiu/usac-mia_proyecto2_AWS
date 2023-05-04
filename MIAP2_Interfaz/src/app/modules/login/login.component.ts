@@ -20,14 +20,20 @@ export class LoginComponent implements OnInit {
     private command: CommandlineService,
     private loginS: LoginService,
     private router: Router,
-    private headerS: HeaderService) { }
+    private headerS: HeaderService) { 
+    }
 
   ngOnInit(): void {
-    this.headerS.cambiarLogin(true);
     let logeado = localStorage.getItem("login");
     if(logeado == "true"){
       this.router.navigate(["reports"]);
     }
+  }
+
+  ngAfterViewInit(){
+    setTimeout(() => {
+      this.headerS.enviarValorLogin(true);
+    }, 100);
   }
 
   ingresar() {
@@ -58,6 +64,7 @@ export class LoginComponent implements OnInit {
         await this.loginS.cerrarSesion();
       } else if(res.Mensaje == "INICIO DE SESION EXITOSO"){
         localStorage.setItem("login", "true");
+        this.headerS.enviarValorLogin(true);
         this.router.navigate(["reports"]);
       }else{
         this.toastr.error(res.Mensaje);

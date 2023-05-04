@@ -1,6 +1,7 @@
 .header {
     padding: 10px 0px 10px 0px;
 }
+
 .tittle {
     width: 100%;
     text-align: center;
@@ -17,9 +18,19 @@
     width: 100%;
 }
 
-.visorGrafo2{
+.visorGrafo2 {
     width: 100%;
-    display: none;
+    visibility: hidden;
+}
+
+.img64 {
+    width: 100%;
+    height: auto;
+}
+
+.pdf64 {
+    width: 100%;
+    height: auto;
 }
 
 .btnVerCompleto {
