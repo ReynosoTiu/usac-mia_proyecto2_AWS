@@ -27,7 +27,7 @@ func iniciarServidor(ip string, puerto string) {
 
 func main() {
 	InicializarVariablesGlobales()
-	iniciarServidor("44.201.225.17", "4000")
+	iniciarServidor("127.0.0.1", "4000")
 	//leerComando() //siempre descomentar esto porque siver
 
 }

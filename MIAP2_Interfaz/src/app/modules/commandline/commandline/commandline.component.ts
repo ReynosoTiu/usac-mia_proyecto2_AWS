@@ -64,41 +64,41 @@ export class CommandlineComponent implements OnInit {
     for (let comando of lineasComando) {
       let c = comando.trim().replace(/\n/g, "").replace(/\r/g, "");
       if (c) {
-        if (c.length > 5) {
-          if (c.slice(0, 6) == "rmdisk") {
-            await this.sweet.confirmAction("Confirmar", "¿Desea elimianar el disco?")
-              .then(async(res:any) => {
-                this.textoArchivoResult += "Desea eliminar el disco";
+        if (c.slice(0, 6) == "rmdisk") {
+          await this.sweet.confirmAction("Confirmar", "¿Desea elimianar el disco?")
+            .then(async(res:any) => {
+              this.textoArchivoResult += "Desea eliminar el disco";
+              this.textAr2.nativeElement.value = this.textoArchivoResult;
+              if (res) {
+                this.textoArchivoResult += " SI\n";
                 this.textAr2.nativeElement.value = this.textoArchivoResult;
-                if (res) {
-                  this.textoArchivoResult += " SI\n";
-                  this.textAr2.nativeElement.value = this.textoArchivoResult;
-                  await this.commandlineService.enviarContenidoEEA(c)
-                    .then(res => {
-                      this.textoArchivoResult += res.Mensaje + "\n";
-                      this.textAr2.nativeElement.value = this.textoArchivoResult;
-                    });
-                } else {
-                  this.textoArchivoResult += " NO\n";
-                  this.textAr2.nativeElement.value = this.textoArchivoResult;
-                }
-              })
-          } else {
-            await this.commandlineService.enviarContenidoEEA(c)
-              .then(res => {
-                if(res.Mensaje == "SESION CERRADA EXITOSAMENTE"){
-                  localStorage.setItem("login", "false");
-                }
-                if(res.Mensaje == "INICIO DE SESION EXITOSO"){
-                  localStorage.setItem("login", "true");
-                }
-                if(res.Tipo == 2){
-                  this.reporteS.guardarReporte(res);
-                }
-                this.textoArchivoResult += res.Mensaje + "\n";
+                await this.commandlineService.enviarContenidoEEA(c)
+                  .then(res => {
+                    this.textoArchivoResult += res.Mensaje + "\n";
+                    this.textAr2.nativeElement.value = this.textoArchivoResult;
+                  });
+              } else {
+                this.textoArchivoResult += " NO\n";
                 this.textAr2.nativeElement.value = this.textoArchivoResult;
-              });
-          }
+              }
+            })
+        } else if(c.toLowerCase() == "pause"){
+          await this.sweet.informacion("PAUSE", "Presiona continuar", "Continuar").then();
+        } else {
+          await this.commandlineService.enviarContenidoEEA(c)
+            .then(res => {
+              if(res.Mensaje == "SESION CERRADA EXITOSAMENTE"){
+                localStorage.setItem("login", "false");
+              }
+              if(res.Mensaje == "INICIO DE SESION EXITOSO"){
+                localStorage.setItem("login", "true");
+              }
+              if(res.Tipo == 2){
+                this.reporteS.guardarReporte(res);
+              }
+              this.textoArchivoResult += res.Mensaje + "\n";
+              this.textAr2.nativeElement.value = this.textoArchivoResult;
+            });
         }
       }
     }
