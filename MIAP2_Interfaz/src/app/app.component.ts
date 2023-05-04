@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { HtmlInputEvent } from './models/global.model';
 import { Router } from '@angular/router';
+import { HeaderService } from './services/app/header.service';
 
 @Component({
   selector: 'app-root',
@@ -11,13 +12,15 @@ export class AppComponent {
   title = 'MIAP2_Interfaz';
 
   disableBtn = false;
-  constructor(private routes: Router) { }
+  constructor(private routes: Router,
+    private headerS: HeaderService) { }
 
   ngOnInit(): void {
   }
 
   cambiar(){
     this.disableBtn = !this.disableBtn;
+    this.headerS.cambiarLogin(this.disableBtn);
     if(this.disableBtn){
       this.routes.navigate(['login'])
     }else{
@@ -27,10 +30,8 @@ export class AppComponent {
 
   textoArchivoLeido = '';
   seleccionar(event: HtmlInputEvent){
-    console.log(event);
     if (event.target.files && event.target.files[0]) {
       let file: File = <File>event.target.files[0];
-      console.log(file.name);
       if(file.name.split('.').pop() === 'eea'){
         const reader = new FileReader();
         reader.onload = () => {
@@ -41,11 +42,8 @@ export class AppComponent {
     }
   }
 
-  ejecutar(contenido:string){
-    for(let linea of contenido.split('\n')){
-      if(linea){
-        console.log(linea);
-      }
-    }
+  getLogin():boolean {
+    this.disableBtn = this.headerS.getLogin();
+    return this.disableBtn;
   }
 }

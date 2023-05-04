@@ -12,7 +12,7 @@ const routes: Routes = [
   },
   {
     path: 'reports',
-    loadChildren: () => import('./modules/report/report-routing.module').then(m => m.ReportRoutingModule)
+    loadChildren: () => import('./modules/report/report-module').then(m => m.ReportModule)
   },
   {
     path: '**', redirectTo: 'commandline'

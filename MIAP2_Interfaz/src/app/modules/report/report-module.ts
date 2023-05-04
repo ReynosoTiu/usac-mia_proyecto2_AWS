@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { ReportRoutingModule } from './report-routing.module';
 import { ReportComponent } from './report.component';
 
@@ -13,4 +12,4 @@ import { ReportComponent } from './report.component';
     ReportRoutingModule
   ]
 })
-export class LoginModule { }
+export class ReportModule { }

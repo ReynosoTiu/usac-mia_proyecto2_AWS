@@ -26,6 +26,12 @@ type inicioS struct {
 	Username string `json:"Username"`
 	Password string `json:"Password"`
 }
+type Respuesta struct {
+	Tipo    int32  `json:"Tipo"`
+	Mensaje string `json:"Mensaje"`
+	Data    string `json:"Data"`
+	Ruta    string `json:"Ruta"`
+}
 
 type logn []inicioS
 
@@ -64,16 +70,8 @@ func Carga(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func ejecutar_contenido_json(contenido string) string {
+func ejecutar_contenido_json(contenido string) Respuesta {
 	return Reconocer_Comando(contenido)
-	// res1 := strings.Split(temp, "\n")
-	// var result = ""
-	// for i := 0; i < len(res1); i++ {
-	// 	if res1[i] != "" {
-	// 		result += Reconocer_Comando(res1[i]) + "\n"
-	// 	}
-	// }
-	// return result
 }
 
 func archivoExiste(ruta string) bool {

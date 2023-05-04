@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Respuesta } from 'src/app/models/servicios.model';
 import { HttpRequestService } from 'src/app/services/http-request.service';
 
 @Injectable({
@@ -16,8 +17,7 @@ export class CommandlineService {
     });
   }
 
-  enviarContenidoEEA(contenido: string) {
+  enviarContenidoEEA(contenido: string): Promise<Respuesta> {
     return this.http.post('Carga', contenido);
-    
   }
 }

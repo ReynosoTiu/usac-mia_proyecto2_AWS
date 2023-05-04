@@ -22,7 +22,7 @@ func EjecutarExec(path string) {
 			lineaTexto := sc.Text() // GET the line string
 
 			if len(lineaTexto) > 0 {
-				respuesta += Reconocer_Comando(lineaTexto) + "\n"
+				//respuesta += Reconocer_Comando(lineaTexto) + "\n"
 			}
 
 		}

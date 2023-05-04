@@ -1,1 +1,29 @@
-<p>report works!</p>
+<div class="row header">
+    <div class="col">
+        <h5 class="tittle">Selecciona un reporte para visualizarlo</h5>
+    </div>
+    <div class="col-3 boton">
+        <button (click)="cerrarSesion()" class="btn btn-primary btn-sm abrir"> Logout </button>
+    </div>
+</div>
+<div class="list-group">
+    <button *ngFor="let item of reportes" (click)="generar(item)" type="button"
+        class="list-group-item list-group-item-action"> {{ item.Ruta }} </button>
+</div>
+<div>
+    <div class="row mt-4" *ngIf="generado">
+        <div class="btnVerCompleto col">
+            <div>
+                <button (click)="descargar()" class="btn btn-primary btn-sm descargar"> Descargar </button>
+                <button (click)="abrir()" class="btn btn-primary btn-sm abrir"> Abrir </button>
+            </div>
+        </div>
+        <div class="col-4">
+            <div>
+                <button (click)="regresar()" class="btn btn-primary btn-sm"> <i class="fa-regular fa-turn-down-left"></i> Regresar </button>
+            </div>
+        </div>
+    </div>
+    <div #miDiv id="graph" class="visorGrafo" [ngClass]="{'visorGrafo': generado, 'visorGrafo2': !generado}">
+    </div>
+</div>

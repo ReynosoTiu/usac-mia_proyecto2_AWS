@@ -1,8 +1,9 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { HtmlInputEvent } from 'src/app/models/global.model';
 import { CommandlineService } from '../commandline.service';
-import { GtoastrService } from 'src/app/services/gtoastr.service';
 import { SweetalertService } from 'src/app/services/sweetalert.service';
+import { ReportService } from '../../report/report.service';
+import { HeaderService } from 'src/app/services/app/header.service';
 @Component({
   selector: 'app-commandline',
   templateUrl: './commandline.component.html',
@@ -19,12 +20,17 @@ export class CommandlineComponent implements OnInit {
 
   constructor(
     private commandlineService: CommandlineService,
-    private toastService: GtoastrService,
-    private sweet: SweetalertService
+    private sweet: SweetalertService,
+    private reporteS: ReportService,
+    private headerS: HeaderService
   ) { }
 
   ngOnInit(): void {
-
+    let item = localStorage.getItem("reportes");
+    if(!item){
+      localStorage.setItem("reportes", JSON.stringify([]));
+    }
+    this.headerS.cambiarLogin(false);
   }
 
   ngAfterViewInit() {
@@ -66,7 +72,7 @@ export class CommandlineComponent implements OnInit {
                   this.textAr2.nativeElement.value = this.textoArchivoResult;
                   await this.commandlineService.enviarContenidoEEA(c)
                     .then(res => {
-                      this.textoArchivoResult += res + "\n";
+                      this.textoArchivoResult += res.Mensaje + "\n";
                       this.textAr2.nativeElement.value = this.textoArchivoResult;
                     });
                 } else {
@@ -77,7 +83,10 @@ export class CommandlineComponent implements OnInit {
           } else {
             await this.commandlineService.enviarContenidoEEA(c)
               .then(res => {
-                this.textoArchivoResult += res + "\n";
+                if(res.Tipo == 2){
+                  this.reporteS.guardarReporte(res);
+                }
+                this.textoArchivoResult += res.Mensaje + "\n";
                 this.textAr2.nativeElement.value = this.textoArchivoResult;
               });
           }

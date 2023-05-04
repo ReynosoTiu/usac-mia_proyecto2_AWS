@@ -162,8 +162,14 @@ func Reconocer_parametros(texto_parametros string, nombre_comando string) []Para
 
 } // fin de reconocer parametros
 
-func Reconocer_Comando(texto_comando string) string {
+func Reconocer_Comando(texto_comando string) Respuesta {
 	fmt.Println(texto_comando)
+	mensajeRespuesta := ""
+	respuestaStruct := Respuesta{
+		Tipo:    1,
+		Mensaje: "",
+		Data:    "",
+	}
 	if texto_comando[0] != 35 {
 		var ins_aux string = ""
 		for i := 0; i < len(texto_comando); i++ {
@@ -174,60 +180,52 @@ func Reconocer_Comando(texto_comando string) string {
 		}
 		switch strings.ToLower(ins_aux) {
 		case "mkdisk":
-			return Reconocer_mkdisk(texto_comando, ins_aux)
+			mensajeRespuesta = Reconocer_mkdisk(texto_comando, ins_aux)
 		case "fdisk":
-			return Reconocer_Fdisk(texto_comando, ins_aux)
+			mensajeRespuesta = Reconocer_Fdisk(texto_comando, ins_aux)
 		case "mkfs":
-			return Reconocer_Mkfs(texto_comando, ins_aux)
+			mensajeRespuesta = Reconocer_Mkfs(texto_comando, ins_aux)
 		case "rmdisk":
-			return Reconocer_Rmdisk(texto_comando, ins_aux)
+			mensajeRespuesta = Reconocer_Rmdisk(texto_comando, ins_aux)
 		case "mount":
-			return Reconocer_Mount(texto_comando, ins_aux)
+			mensajeRespuesta = Reconocer_Mount(texto_comando, ins_aux)
 		case "login":
-			return Reconocer_Login(texto_comando, ins_aux)
+			mensajeRespuesta = Reconocer_Login(texto_comando, ins_aux)
 		case "logout":
-			return Logout()
+			mensajeRespuesta = Logout()
 		case "mkgrp":
-			return Reconocer_Mkgrp(texto_comando, ins_aux)
+			mensajeRespuesta = Reconocer_Mkgrp(texto_comando, ins_aux)
 		case "rmgrp":
-			return Reconocer_Rmgrp(texto_comando, ins_aux)
+			mensajeRespuesta = Reconocer_Rmgrp(texto_comando, ins_aux)
 		case "mkuser":
-			return Reconocer_Mkusr(texto_comando, ins_aux)
+			mensajeRespuesta = Reconocer_Mkusr(texto_comando, ins_aux)
 		case "rmusr":
-			return Reconocer_Rmusr(texto_comando, ins_aux)
+			mensajeRespuesta = Reconocer_Rmusr(texto_comando, ins_aux)
 		case "mkdir":
-			return Reconocer_Mkdir(texto_comando, ins_aux)
+			mensajeRespuesta = Reconocer_Mkdir(texto_comando, ins_aux)
 		case "mkfile":
-			return Reconocer_Mkfile(texto_comando, ins_aux)
-		case "comentario":
-			break
-		case "exec":
-
-			parametros := Reconocer_parametros(texto_comando, ins_aux)
-			if strings.ToLower(parametros[0].nombre) == "-path=" {
-				EjecutarExec(parametros[0].valor)
-			} else {
-				fmt.Println("ERROR PARAMETRO DESCONOCIDO", parametros[0].nombre)
-			}
-
-			break
-
+			mensajeRespuesta = Reconocer_Mkfile(texto_comando, ins_aux)
 		case "rep":
-			return Reconocer_Rep(texto_comando, ins_aux)
+			respuestaStruct = Reconocer_Rep(texto_comando, ins_aux)
 		case "pause":
-			//reader := bufio.NewReader(os.Stdin)
-			//texto, _ := reader.ReadString('\n')
-			//_ = texto
-			return "PAUSE"
+			mensajeRespuesta = "PAUSE"
 		default:
-			return "COMANDO NO RECONOCIDO0"
+			mensajeRespuesta = "COMANDO NO RECONOCIDO0"
 		}
 
 	} else {
-		return texto_comando
+		mensajeRespuesta = texto_comando
 	}
 
-	return "RECONOCER COMANDO"
+	if respuestaStruct.Mensaje != "" {
+		return respuestaStruct
+	}
+
+	return Respuesta{
+		Tipo:    0,
+		Mensaje: mensajeRespuesta,
+		Data:    "",
+	}
 }
 
 func Reconocer_mkdisk(lista_param string, comando_aux string) string {
@@ -1025,7 +1023,7 @@ func Reconocer_Mkfile(lista_comando string, comando_aux string) string {
 /*____________________________________ FIN DE MKFILE ____________________________*/
 
 /*__________________________________ INICIO REPORTE _____________________________________*/
-func Reconocer_Rep(lista_param string, comando_aux string) string {
+func Reconocer_Rep(lista_param string, comando_aux string) Respuesta {
 	var name string = ""
 	var id string = ""
 	var path string = ""
@@ -1047,7 +1045,11 @@ func Reconocer_Rep(lista_param string, comando_aux string) string {
 
 					if name == "" {
 						fmt.Println("ERROR NAME SIN VALOR EN PARAMETRO REPORTE")
-						return "Valor del parametro NAME incorrecto"
+						return Respuesta{
+							Tipo:    0,
+							Mensaje: "Valor del parametro NAME incorrecto",
+							Data:    "",
+						}
 					}
 					hay_name = true
 
@@ -1061,7 +1063,11 @@ func Reconocer_Rep(lista_param string, comando_aux string) string {
 
 					if path == "" {
 						fmt.Println("ERROR ID SIN VALOR EN PARAMETRO REPORTE")
-						return "Valor del parametro PATH incorrecto"
+						return Respuesta{
+							Tipo:    0,
+							Mensaje: "Valor del parametro PATH incorrecto",
+							Data:    "",
+						}
 					}
 					hay_path = true
 				} else if ">id=" == strings.ToLower(parametros[i].nombre) {
@@ -1070,7 +1076,11 @@ func Reconocer_Rep(lista_param string, comando_aux string) string {
 
 					if id == "" {
 						fmt.Println("ERROR ID SIN VALOR EN PARAMETRO REPORTE")
-						return "Valor del parametro ID incorrecto"
+						return Respuesta{
+							Tipo:    0,
+							Mensaje: "Valor del parametro ID incorrecto",
+							Data:    "",
+						}
 					}
 					hay_id = true
 
@@ -1079,12 +1089,20 @@ func Reconocer_Rep(lista_param string, comando_aux string) string {
 
 					if ruta == "" {
 						fmt.Println("ERROR RUTA SIN VALOR EN PARAMETRO REPORTE")
-						return "Valor del parametro RUTA incorrecto"
+						return Respuesta{
+							Tipo:    0,
+							Mensaje: "Valor del parametro RUTA incorrecto",
+							Data:    "",
+						}
 					}
 					//hay_id = true
 				} else {
 					fmt.Println("ERROR NINGUN PARAMETRO COICIDE: " + parametros[i].nombre)
-					return "No se reconoce el parametro"
+					return Respuesta{
+						Tipo:    0,
+						Mensaje: "No se reconoce el parametro",
+						Data:    "",
+					}
 				}
 
 			}
@@ -1098,60 +1116,113 @@ func Reconocer_Rep(lista_param string, comando_aux string) string {
 					//Crear_carpetas(path)
 					if listaS.buscarParticion(id) {
 						nodito := listaS.obtenerNodo(id)
+						reporteRespuesta := Respuesta{
+							Tipo:    0,
+							Mensaje: "",
+							Data:    "",
+						}
 						if name == "mbr" {
-							if crear_rep_mbr(nodito.Path, path, path_reporte, extension_rep) == 0 {
+							reporteRespuesta = crear_rep_mbr(nodito.Path, path, path_reporte, extension_rep)
+							if reporteRespuesta.Tipo == 0 {
 								fmt.Println("REPORTE MBR CREADO EXITOSAMENTE EN REP")
 							} else {
 								fmt.Println("ERROR NO SE PUDO CREAR REPORTE MBR EN REP")
-								return "No se pudo crear el reporte MBR"
+								return Respuesta{
+									Tipo:    0,
+									Mensaje: "No se pudo crear el reporte MBR",
+									Data:    "",
+								}
 							}
 						} else if name == "disk" {
-							if crear_rep_disk(nodito.Path, path, path_reporte, extension_rep) == 0 {
+							reporteRespuesta = crear_rep_disk(nodito.Path, path, path_reporte, extension_rep)
+							if reporteRespuesta.Tipo == 0 {
 								fmt.Println("REPORTE DISK CREADO EXITOSAMENTE EN REP")
 							} else {
 								fmt.Println("ERROR NO SE PUDO CREAR REPORTE DISK EN REP")
-								return "No se pudo crear el reporte REP"
+								return Respuesta{
+									Tipo:    0,
+									Mensaje: "No se pudo crear el reporte REP",
+									Data:    "",
+								}
 							}
 						} else if name == "tree" {
-							if crear_rep_tree(nodito.Path, path, path_reporte, extension_rep) == 0 {
+							reporteRespuesta = crear_rep_tree(nodito.Path, path, path_reporte, extension_rep)
+							if reporteRespuesta.Tipo == 0 {
 								fmt.Println("REPORTE TREE CREADO EXITOSAMENTE EN REP")
 							} else {
 								fmt.Println("ERROR NO SE PUDO CREAR REPORTE TREE EN REP")
-								return "No se pudo crear el reporte TREE"
+								return Respuesta{
+									Tipo:    0,
+									Mensaje: "No se pudo crear el reporte TREE",
+									Data:    "",
+								}
 							}
 						} else if name == "sb" {
-							if crear_rep_super_bloque(nodito.Path, path, path_reporte, extension_rep) == 0 {
+							reporteRespuesta = crear_rep_super_bloque(nodito.Path, path, path_reporte, extension_rep)
+							if reporteRespuesta.Tipo == 0 {
 								fmt.Println("REPORTE SB CREADO EXITOSAMENTE EN REP")
 							} else {
 								fmt.Println("ERROR NO SE PUDO CREAR REPORTE SB EN REP")
-								return "No se pudo crear el reporte SUPERBLOQUE"
+								return Respuesta{
+									Tipo:    0,
+									Mensaje: "No se pudo crear el reporte SUPERBLOQUE",
+									Data:    "",
+								}
 							}
 						} else if name == "file" {
-							if crear_rep_file(nodito.Path, path, path_reporte, extension_rep, ruta) == 0 {
+							reporteRespuesta = crear_rep_file(nodito.Path, path, path_reporte, extension_rep, ruta)
+							if reporteRespuesta.Tipo == 0 {
 								fmt.Println("REPORTE FILE CREADO EXITOSAMENTE EN REP")
 							} else {
 								fmt.Println("ERROR NO SE PUDO CREAR REPORTE FILE EN REP")
-								return "No se pudo crear el reporte FILE"
+								return Respuesta{
+									Tipo:    0,
+									Mensaje: "No se pudo crear el reporte FILE",
+									Data:    "",
+								}
 							}
 						}
-						return "REPORTE CREADO EXITOSAMENTE"
+						reporteRespuesta.Tipo = 2
+						reporteRespuesta.Ruta = path_reporte
+						reporteRespuesta.Mensaje = "REPORTE CREADO EXITOSAMENTE"
+						return reporteRespuesta
 					} else {
 						fmt.Println("ERROR DISCO NO MONTADO PARA CREAR REPORTE")
-						return "La particion indicada no se encuentra montada"
+						return Respuesta{
+							Tipo:    0,
+							Mensaje: "La particion indicada no se encuentra montada",
+							Data:    "",
+						}
 					}
 
 				} else {
 					fmt.Println("ERROR NO HAY ID EN REPORTE")
-					return "Parametro ID requerido"
+					return Respuesta{
+						Tipo:    0,
+						Mensaje: "Parametro ID requerido",
+						Data:    "",
+					}
 				}
 			} else {
 				fmt.Println("ERROR NO HAY PATH EN REPORTE")
-				return "Parametro PATH requerido"
+				return Respuesta{
+					Tipo:    0,
+					Mensaje: "Parametro PATH requerido",
+					Data:    "",
+				}
 			}
 		} else {
 			fmt.Println("ERROR NO HAY  NAME REPORTE")
-			return "Parametro NAME requerido"
+			return Respuesta{
+				Tipo:    0,
+				Mensaje: "Parametro NAME requerido",
+				Data:    "",
+			}
 		}
 	}
-	return "NO SE RECONOCE EL COMANDO1"
+	return Respuesta{
+		Tipo:    0,
+		Mensaje: "NO SE RECONOCE EL COMANDO1",
+		Data:    "",
+	}
 } /*______________________ FIN DE REPORTE _____________________*/

@@ -11,7 +11,7 @@ import (
 	"unsafe"
 )
 
-func crear_rep_mbr(direccion_disco string, destino_reporte_dot string, destino_reporte_grafico string, extension string) int {
+func crear_rep_mbr(direccion_disco string, destino_reporte_dot string, destino_reporte_grafico string, extension string) Respuesta {
 	Crear_carpetas(destino_reporte_dot) //para crear las carpetas que no existen
 	var contenidoDot string = ""
 	//______________ LEYENDO ARCHIVO ____________________
@@ -20,7 +20,11 @@ func crear_rep_mbr(direccion_disco string, destino_reporte_dot string, destino_r
 	if err != nil {
 		//log.Fatal("ERROR AL ABRIR ARCHIVO", err)
 		fmt.Println("ERROR AL ABRIR ARCHIVO:", direccion_disco)
-		return -1
+		return Respuesta{
+			Tipo:    -1,
+			Mensaje: "",
+			Data:    "",
+		}
 	}
 
 	if err == nil {
@@ -87,14 +91,36 @@ func crear_rep_mbr(direccion_disco string, destino_reporte_dot string, destino_r
 			contenidoDot += ">];\n"
 		}
 		contenidoDot += "}\n"
-
+		contenidoDotFinal := fmt.Sprintf("%s", contenidoDot)
 		crear_archivo_reporte(destino_reporte_dot, contenidoDot)
 		contenidoDot = ""
 		//var comando string = "dot -T" + extension + " " + destino_reporte_dot + " -o " + destino_reporte_grafico
-		return systema_comando(destino_reporte_dot, destino_reporte_grafico, extension)
+		fmt.Println("REPORTASO")
+		fmt.Println(destino_reporte_dot)
+		fmt.Println(destino_reporte_grafico)
+		fmt.Println(extension)
+
+		res := systema_comando(destino_reporte_dot, destino_reporte_grafico, extension)
+		if res == 0 {
+			return Respuesta{
+				Tipo:    0,
+				Mensaje: "",
+				Data:    contenidoDotFinal,
+			}
+		}
+
+		return Respuesta{
+			Tipo:    -1,
+			Mensaje: "",
+			Data:    "",
+		}
 
 	} else {
-		return -1
+		return Respuesta{
+			Tipo:    -1,
+			Mensaje: "",
+			Data:    "",
+		}
 	}
 }
 
@@ -162,7 +188,7 @@ func obtener_espacio_libre(inicio_part int, fin_part int, tamano_part int, tipo 
 }
 
 /*____________________________________________ FIN FUNCIONES IMPORTANTES PARA REPORTE __________________________________*/
-func crear_rep_disk(direccion_disco string, destino_reporte_dot string, destino_reporte_grafico string, extension string) int {
+func crear_rep_disk(direccion_disco string, destino_reporte_dot string, destino_reporte_grafico string, extension string) Respuesta {
 	Crear_carpetas(destino_reporte_dot)
 
 	var contenidoDot string = ""
@@ -172,7 +198,11 @@ func crear_rep_disk(direccion_disco string, destino_reporte_dot string, destino_
 	if err != nil {
 		//log.Fatal("ERROR AL ABRIR ARCHIVO", err)
 		fmt.Println("ERROR AL ABRIR ARCHIVO:", direccion_disco)
-		return -1
+		return Respuesta{
+			Tipo:    -1,
+			Mensaje: "",
+			Data:    "",
+		}
 	}
 
 	if err == nil {
@@ -259,10 +289,24 @@ func crear_rep_disk(direccion_disco string, destino_reporte_dot string, destino_
 			//____________________________________________________________ FIN PARA ESPACION FINAL EN DISCO
 
 			contenidoDot += "\n\t</TR>\n\t</TABLE>\n\t>];}"
+			contenidoDotFinal := fmt.Sprintf("%s", contenidoDot)
 			crear_archivo_reporte(destino_reporte_dot, contenidoDot)
 			contenidoDot = ""
 
-			return systema_comando(destino_reporte_dot, destino_reporte_grafico, extension)
+			res := systema_comando(destino_reporte_dot, destino_reporte_grafico, extension)
+			if res == 0 {
+				return Respuesta{
+					Tipo:    0,
+					Mensaje: "",
+					Data:    contenidoDotFinal,
+				}
+			}
+
+			return Respuesta{
+				Tipo:    -1,
+				Mensaje: "",
+				Data:    "",
+			}
 
 		} else {
 
@@ -272,11 +316,15 @@ func crear_rep_disk(direccion_disco string, destino_reporte_dot string, destino_
 	} else {
 		fmt.Println("Error al abrir archivo para crear reporte disk")
 	}
-	return -1
+	return Respuesta{
+		Tipo:    -1,
+		Mensaje: "",
+		Data:    "",
+	}
 } //fin de metodo crear_rep_disk
 
 /*_____________________________REPORTE TREE ___________________*/
-func crear_rep_tree(direccion_disco string, destino_reporte_dot string, destino_reporte_grafico string, extension string) int {
+func crear_rep_tree(direccion_disco string, destino_reporte_dot string, destino_reporte_grafico string, extension string) Respuesta {
 	Crear_carpetas(destino_reporte_dot)
 
 	var contenidoDot string = ""
@@ -286,7 +334,11 @@ func crear_rep_tree(direccion_disco string, destino_reporte_dot string, destino_
 	if err != nil {
 		//log.Fatal("ERROR AL ABRIR ARCHIVO", err)
 		fmt.Println("ERROR AL ABRIR ARCHIVO:", direccion_disco)
-		return -1
+		return Respuesta{
+			Tipo:    -1,
+			Mensaje: "",
+			Data:    "",
+		}
 	}
 
 	var super SUPER_BLOQUE
@@ -306,7 +358,6 @@ func crear_rep_tree(direccion_disco string, destino_reporte_dot string, destino_
 	contenidoDot = contenidoDot + "    rankdir=\"LR\" \n"
 	//Creamos los inodos
 	for aux < super.S_bm_block_start {
-		fmt.Println("Dentro de for AUX tree")
 		//fmt.Println("INicio de super bloque:",supe)
 
 		fp.Seek(int64(super.S_bm_inode_start+i), 0)
@@ -379,11 +430,24 @@ func crear_rep_tree(direccion_disco string, destino_reporte_dot string, destino_
 	}
 
 	contenidoDot = contenidoDot + "\n\n}"
-	fmt.Println(contenidoDot)
+	contenidoDotFinal := fmt.Sprintf("%s", contenidoDot)
 	crear_archivo_reporte(destino_reporte_dot, contenidoDot)
 	contenidoDot = ""
 
-	return systema_comando(destino_reporte_dot, destino_reporte_grafico, extension)
+	res := systema_comando(destino_reporte_dot, destino_reporte_grafico, extension)
+	if res == 0 {
+		return Respuesta{
+			Tipo:    0,
+			Mensaje: "",
+			Data:    contenidoDotFinal,
+		}
+	}
+
+	return Respuesta{
+		Tipo:    -1,
+		Mensaje: "",
+		Data:    "",
+	}
 
 	//Original----->string comando = "dot -T"+extension.toStdString()+" grafica.dot -o "+destino.toStdString();
 	//Original---->system(comando.c_str());
@@ -394,7 +458,7 @@ func crear_rep_tree(direccion_disco string, destino_reporte_dot string, destino_
 	//return 0
 }
 
-func crear_rep_super_bloque(direccion_disco string, destino_reporte_dot string, destino_reporte_grafico string, extension string) int {
+func crear_rep_super_bloque(direccion_disco string, destino_reporte_dot string, destino_reporte_grafico string, extension string) Respuesta {
 	Crear_carpetas(destino_reporte_dot)
 
 	var contenidoDot string = ""
@@ -404,7 +468,11 @@ func crear_rep_super_bloque(direccion_disco string, destino_reporte_dot string, 
 	if err != nil {
 		//log.Fatal("ERROR AL ABRIR ARCHIVO", err)
 		fmt.Println("ERROR AL ABRIR ARCHIVO:", direccion_disco)
-		return -1
+		return Respuesta{
+			Tipo:    -1,
+			Mensaje: "",
+			Data:    "",
+		}
 	}
 	var super SUPER_BLOQUE
 
@@ -435,13 +503,27 @@ func crear_rep_super_bloque(direccion_disco string, destino_reporte_dot string, 
 	contenidoDot = contenidoDot + "   </table>>]\n"
 	contenidoDot = contenidoDot + "\n}"
 
+	contenidoDotFinal := fmt.Sprintf("%s", contenidoDot)
 	crear_archivo_reporte(destino_reporte_dot, contenidoDot)
 	contenidoDot = ""
-	return systema_comando(destino_reporte_dot, destino_reporte_grafico, extension)
+	res := systema_comando(destino_reporte_dot, destino_reporte_grafico, extension)
+	if res == 0 {
+		return Respuesta{
+			Tipo:    0,
+			Mensaje: "",
+			Data:    contenidoDotFinal,
+		}
+	}
+
+	return Respuesta{
+		Tipo:    -1,
+		Mensaje: "",
+		Data:    "",
+	}
 
 }
 
-func crear_rep_file(direccion_disco string, destino_reporte_dot string, destino_reporte_grafico string, extension string, ruta_archivo string) int {
+func crear_rep_file(direccion_disco string, destino_reporte_dot string, destino_reporte_grafico string, extension string, ruta_archivo string) Respuesta {
 	Crear_carpetas(destino_reporte_dot)
 
 	var contenidoDot string = ""
@@ -451,7 +533,11 @@ func crear_rep_file(direccion_disco string, destino_reporte_dot string, destino_
 	if err != nil {
 		//log.Fatal("ERROR AL ABRIR ARCHIVO", err)
 		fmt.Println("ERROR AL ABRIR ARCHIVO:", direccion_disco)
-		return -1
+		return Respuesta{
+			Tipo:    -1,
+			Mensaje: "",
+			Data:    "",
+		}
 	}
 	var super SUPER_BLOQUE
 	var inodo TABLA_INODOS
@@ -462,7 +548,11 @@ func crear_rep_file(direccion_disco string, destino_reporte_dot string, destino_
 	var numero_inodo int = buscarCarpetaArchivo(fp, ruta_archivo)
 	if numero_inodo == -1 {
 		fmt.Println("ERROR EL ARCHIVO:", ruta_archivo, "NO EXISTE PARA REPORTE")
-		return -1
+		return Respuesta{
+			Tipo:    -1,
+			Mensaje: "",
+			Data:    "",
+		}
 	}
 	var name string = filepath.Base(ruta_archivo)
 	fp.Seek(int64(super.S_inode_start+tamanoInodo*int32(numero_inodo)), 0)
@@ -487,8 +577,22 @@ func crear_rep_file(direccion_disco string, destino_reporte_dot string, destino_
 	contenidoDot = contenidoDot + "   </table>>]\n"
 	contenidoDot = contenidoDot + "\n}"
 	//cout << "Reporte file generado con exito " << endl;
+	contenidoDotFinal := fmt.Sprintf("%s", contenidoDot)
 	crear_archivo_reporte(destino_reporte_dot, contenidoDot)
 	contenidoDot = ""
-	return systema_comando(destino_reporte_dot, destino_reporte_grafico, extension)
+	res := systema_comando(destino_reporte_dot, destino_reporte_grafico, extension)
+	if res == 0 {
+		return Respuesta{
+			Tipo:    0,
+			Mensaje: "",
+			Data:    contenidoDotFinal,
+		}
+	}
+
+	return Respuesta{
+		Tipo:    -1,
+		Mensaje: "",
+		Data:    "",
+	}
 
 }

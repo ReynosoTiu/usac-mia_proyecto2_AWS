@@ -1,0 +1,37 @@
+.header {
+    padding: 10px 0px 10px 0px;
+}
+.tittle {
+    width: 100%;
+    text-align: center;
+    margin-left: 10px;
+}
+
+.boton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.visorGrafo {
+    width: 100%;
+}
+
+.visorGrafo2{
+    width: 100%;
+    display: none;
+}
+
+.btnVerCompleto {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.descargar {
+    margin-right: 5px;
+}
+
+.abrir {
+    margin-left: 5px;
+}
