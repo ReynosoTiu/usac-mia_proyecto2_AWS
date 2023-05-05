@@ -1115,6 +1115,12 @@ func Reconocer_Rep(lista_param string, comando_aux string) Respuesta {
 				if hay_id {
 					//Crear_carpetas(path)
 					if listaS.buscarParticion(id) {
+						if !actualSesion.hay_Sesion {
+							return Respuesta{
+								Tipo:    0,
+								Mensaje: "No hay una sesión activa REP-LOGIN",
+							}
+						}
 						nodito := listaS.obtenerNodo(id)
 						reporteRespuesta := Respuesta{
 							Tipo:    0,

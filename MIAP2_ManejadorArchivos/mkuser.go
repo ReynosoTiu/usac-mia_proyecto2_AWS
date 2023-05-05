@@ -19,10 +19,15 @@ func Crear_Mkusr(usuario string, pass string, grupo string) string {
 		return "Valor del parametro GRP debe tener maximo 10 caracteres"
 	}
 
-	if buscarGrupo(grupo, actualSesion.Path) != -1 {
+	idGrupo := buscarGrupo(grupo, actualSesion.Path)
+	if idGrupo != -1 {
+		if idGrupo == 0 {
+			return "Grupo eliminado"
+		}
+
 		if !buscarUsuario(usuario) {
 			var id = getID_usr()
-
+			fmt.Println("ID Cliente", id)
 			var datos string = strconv.Itoa(id) + ",U," + grupo + "," + usuario + "," + pass + "\n"
 			agregarUsersTXT1(datos, actualSesion.Path)
 
@@ -108,7 +113,7 @@ func getID_usr() int {
 	if err != nil {
 		return -1
 	}
-	var cadena [400]byte
+	var cadena []byte
 	var res int = 0
 	var super SUPER_BLOQUE
 	var inodo TABLA_INODOS
@@ -123,16 +128,19 @@ func getID_usr() int {
 		if inodo.I_block[i] != -1 {
 			var archivo BLOQUE_ARCHIVO
 			fp.Seek(int64(super.S_block_start), 0)
+			fmt.Println("tamanio", int(inodo.I_block[i]))
 			for j := 0; j < int(inodo.I_block[i]); j++ {
 				archivo = Leer_BloqueArchivo(fp, tamanoArchivo)
 			}
-			concatenar(cadena[:], archivo.B_content[:], len(aString(cadena[:])))
+			//concatenar(cadena[:], archivo.B_content[:], len(aString(cadena[:])))
+			cadena = append(cadena[:], archivo.B_content[:]...)
 		}
 	}
 
 	var contenido_cadena string = aString(cadena[:])
 	var contenido_ptr *string = &contenido_cadena
 
+	fmt.Println(contenido_cadena)
 	var token *string = strtok_r(contenido_ptr, "\n")
 	for *token != "" {
 		var id [2]byte
@@ -140,6 +148,7 @@ func getID_usr() int {
 
 		var token_id *string = strtok_r(token, ",")
 		copy(id[:], *token_id)
+		fmt.Println("IDUSUARIO", aString(id[:]))
 		if aString(id[:]) != "0" { //Verificar que no sea un U/G eliminado
 			var token_tipo *string = strtok_r(token, ",")
 			copy(tipo[:], *token_tipo)

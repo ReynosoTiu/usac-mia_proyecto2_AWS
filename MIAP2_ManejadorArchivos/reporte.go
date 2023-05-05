@@ -158,6 +158,7 @@ func aString(c []byte) string {
 }
 
 func systema_comando(dir_dot string, dir_rep string, extension_rep string) int {
+	fmt.Println("extension_rep", extension_rep)
 	var arg1 string = "dot"
 	var arg2 string = "-T" + extension_rep
 	var arg3 string = dir_dot
